@@ -12,7 +12,7 @@ from A_preprocessing.Preprocessing import project_path
 # from A_preprocessing.Preprocessing import Y_train
 # from A_preprocessing.Preprocessing import divided_train_data, all_X_test_data
 
-#a
+
 import openpyxl, pickle, math, os
 import pandas as pd
 import matplotlib.pyplot as plt
@@ -42,7 +42,7 @@ def logreg_f(C, X_train, Y_train, X_valid, Y_valid):
 
 
 C_range = [10**i for i in range(-10,5)]      # raspon C hiperparametara
-xlsx_file = "B_Logistic_Regression/Acc_LogReg.xlsx"                # ime excel file u koji se spremaju rezultati, kasnije
+xlsx_file = "B_Logistic_Regression/output/Acc_LogReg.xlsx"                # ime excel file u koji se spremaju rezultati, kasnije
 
 accuracy_dict = {}                           # spremanje parova (C:točnost za svaki C) za cijeli set podataka
 best_grid_acc = {}                           # spremanje najbolje točnosti za podatke
@@ -73,6 +73,9 @@ for data_name in divided_train_data["X_train_data"]:
     accuracy_dict[data_name] = acc_for_data         # dodavanje svih točnosti u rječnik
 
 accuracy_DF = pd.DataFrame(accuracy_dict, index=[C_range])  # kreiranje DataFrame-a
+
+
+
 
 
 # Funkcija koja zapisuje sve točnosti u excel
@@ -123,7 +126,7 @@ def plot_accuracity(data_sets):
 
     plt.legend()
     # plt.show()
-    fig.savefig("B_Logistic_Regression/plot_LogReg.png", dpi=300)
+    fig.savefig("B_Logistic_Regression/output/plot_LogReg.png", dpi=300)
 
 
 # plot_accuracity(data_sets= ["X", "poly4_X"])

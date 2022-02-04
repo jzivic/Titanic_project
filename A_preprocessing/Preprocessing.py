@@ -29,6 +29,20 @@ all_df = train_df.append(test_df)
 
 
 
+def proba(dataset, f1,f2, fize=(155)):
+    fig,ax = plt.subplots(figsize=(18,5))
+    ax.grid(True)
+    plt.xticks(list(range(0,100,2)))
+    sns.swarmplot(y=f1, x=f2, hue="Survived", data=train_df)
+    plt.show()
+
+print(train_df)
+
+proba(train_df, "Sex", "Age")
+
+
+
+
 # Pregled varijabli i eventualni nedostatak podataka:
 # print(train_df.info())
 # print(test_df.info())
@@ -325,9 +339,9 @@ with open('A_preprocessing/all_X_test_data.pickle', 'wb') as f_test:    # sprema
 # Rječnik sa svim ukupnim train podacima
 all_X_train_data = {"X": X_train,
                     "scal_std_X": scal_std_X_train,
-                    # "scal_MM_X": scal_MM_X_train,
+                    "scal_MM_X": scal_MM_X_train,
                     # "poly3_X": poly3_X_train,
-                    # "poly4_X": poly4_X_train,
+                    "poly4_X": poly4_X_train,
                     # "pca_6_X": pca_6_X_train,
                     # "pca_5_X": pca_5_X_train,
                     # "pca_4_X": pca_4_X_train,
@@ -338,8 +352,8 @@ all_X_train_data = {"X": X_train,
 # Skup za treniranje se dijeli na skup za treniranje i skup za validaciju modela
 X_train_data, X_valid_data, Y_train_data, Y_valid_data, = {}, {}, {}, {}
 for data in all_X_train_data:
-    X_train, X_valid, y_train, y_valid = train_test_split(all_X_train_data[data], Y_train, random_state=11, test_size=0.1)
-    # X_train, X_valid, y_train, y_valid = train_test_split(all_X_train_data[data], Y_train, test_size=0.1)
+    # X_train, X_valid, y_train, y_valid = train_test_split(all_X_train_data[data], Y_train, random_state=11, test_size=0.1)
+    X_train, X_valid, y_train, y_valid = train_test_split(all_X_train_data[data], Y_train, test_size=0.1)
     X_train_data[data] = X_train
     X_valid_data[data] = X_valid
     Y_train_data[data] = y_train    # y je ovdje, Y je sve skupa gore
@@ -421,9 +435,6 @@ scaler_model = MinMaxScaler()
 scal_MM_X_train = scaler_model.fit_transform(X_train)
 scal_MM_X_test = scaler_model.transform(X_test)
 """
-
-
-
 
 
 
