@@ -29,16 +29,13 @@ all_df = train_df.append(test_df)
 
 
 
-def proba(dataset, f1,f2, fize=(155)):
+def dots_2D(dataset, category_1,category_2):
     fig,ax = plt.subplots(figsize=(18,5))
     ax.grid(True)
     plt.xticks(list(range(0,100,2)))
-    sns.swarmplot(y=f1, x=f2, hue="Survived", data=train_df)
+    sns.swarmplot(y=category_1, x=category_2, hue="Survived", data=train_df)
     plt.show()
-
-print(train_df)
-
-proba(train_df, "Sex", "Age")
+# dots_2D(train_df, "Sex", "Age")
 
 
 
@@ -63,13 +60,13 @@ Pretpostavke:
 
 
 
-# Opisna funkcija koja daje opći pregled/grafove preživljavanja po pojedinoj kateogriji
+# Opisna funkcija koja daje opći pregled i grafove preživljavanja po pojedinoj kateogriji
 def survived_in_category(category):
     wanted_data = train_df[[category, 'Survived']]       # podaci željene kategorije i preživljavanja
     number_in_category = wanted_data.groupby(category).size()     # broj ljudi podijeljen po kategoriji
 
     survived_people = wanted_data[wanted_data["Survived"] == 1]       # preživjeli iz ukupnog popisa
-    died_people = wanted_data[wanted_data["Survived"] == 0]
+    died_people = wanted_data[wanted_data["Survived"] == 0]           # umrli
 
     # sortiran udio preživjelih u svakoj kateogoriji
     survived_rate = wanted_data.\
@@ -77,13 +74,12 @@ def survived_in_category(category):
         .sort_values(by='Survived', ascending=False)
 
 
-
-    # delete folder for category if exists and create an empty one
+    # brisanje foldera ako postoji i stvaranje praznog
     try:
-        shutil.rmtree("diagrams/"+category)
+        shutil.rmtree("A_preprocessing/diagrams/"+category)
     except:
         FileNotFoundError
-    os.mkdir("diagrams/"+category)
+    os.mkdir("A_preprocessing/diagrams/"+category)
 
 
     # Ukupan broj ljudi po kategoriji
@@ -96,9 +92,8 @@ def survived_in_category(category):
         plt.xlabel("Category")
         plt.bar(survived_rate[category], number_in_category)
         plt.draw()
-        plt.savefig("diagrams/"+category+"/Overall people in "+ category+".png", dpi=300)
+        plt.savefig("A_preprocessing/diagrams/"+category+"/Overall people in "+ category+".png", dpi=300)
         plt.clf()
-
 
     # Postotak preživjelih ljudi po kategoriji
     def survival_percentage():
@@ -110,9 +105,8 @@ def survived_in_category(category):
         plt.xlabel("Category")
         plt.bar(survived_rate[category], survived_rate["Survived"]*100)
         plt.draw()
-        plt.savefig("diagrams/"+category+"/Survival percentage in "+ category+".png", dpi=300)
+        plt.savefig("A_preprocessing/diagrams/"+category+"/Survival percentage in "+ category+".png", dpi=300)
         plt.clf()
-
 
     # Odnos brojeva preživjelih i umrlih ljudi po kategoriji (isti grafovi, drugi način)
     def survived_vs_died():
@@ -124,7 +118,7 @@ def survived_in_category(category):
         plt.hist(survived_people[category], bins=10, color="blue", edgecolor="red", alpha=0.5, label="survived")
         plt.legend()
         plt.draw()
-        plt.savefig("diagrams/"+category+"/Survived and died ratio in "+ category+".png", dpi=300)
+        plt.savefig("A_preprocessing/diagrams/"+category+"/Survived and died ratio in "+ category+".png", dpi=300)
         plt.clf()
 
     try:
@@ -142,6 +136,22 @@ def survived_in_category(category):
 # survived_in_category("Parch")
 # survived_in_category("Fare")
 # survived_in_category("Embarked")
+
+
+
+# Funkcija za plotanje 2D grafa: 2 kategorije i preživaljanje
+def dots_2D(category_1, category_2):
+    fig, ax = plt.subplots(figsize=(18, 5))
+    ax.grid(True)
+    plt.xticks(list(range(0, 100, 2)))
+    # sns.swarmplot(y=category_1, x=category_2, hue="Survived", data=train_df)
+    plt.legend()
+    plt.draw()
+    plt.savefig("A_preprocessing/diagrams/2D_"+category_1+"_"+category_2+".png", dpi=300)
+    plt.clf()
+
+# dots_2D(category_1="Sex", category_2="Age")
+
 
 
 """
@@ -209,7 +219,7 @@ X_test = train_filtered_data[0]
 ###################################        3. Manipulacije podacima        #########################################
 
 """
-Kako bi se dobila što veća točnost modela, podaci će se transformirati u nekoliko kateorija te će se naknadno vidjeti
+Kako bi se dobila što veća točnost modela, podaci će se transformirati u nekoliko kategorija te će se vidjeti
 koji imaju najbolju točnost. Transformacije su Standardno i MinMax skaliranje, dizanje u viši prostor značajki za 
 različit broj razina te PCA analiza odnosno redukcija značajki. 
 """
@@ -318,7 +328,6 @@ poly_scal_train = poly_and_scaling_data[0]
 poly_scal_test = poly_and_scaling_data[1]
 
 
-
 # Rječnik sa svim test podacima za predviđanje
 all_X_test_data = { "X": X_test,
                     "scal_std_X": scal_std_X_test,
@@ -331,16 +340,15 @@ all_X_test_data = { "X": X_test,
                     "poly_scal_X": poly_scal_test,
                    }
 
-
-
 with open('A_preprocessing/all_X_test_data.pickle', 'wb') as f_test:    # spremanje riječnika u dictdf
     pickle.dump(all_X_test_data, f_test)
+
 
 # Rječnik sa svim ukupnim train podacima
 all_X_train_data = {"X": X_train,
                     "scal_std_X": scal_std_X_train,
                     "scal_MM_X": scal_MM_X_train,
-                    # "poly3_X": poly3_X_train,
+                    "poly3_X": poly3_X_train,
                     "poly4_X": poly4_X_train,
                     # "pca_6_X": pca_6_X_train,
                     # "pca_5_X": pca_5_X_train,
@@ -352,7 +360,9 @@ all_X_train_data = {"X": X_train,
 # Skup za treniranje se dijeli na skup za treniranje i skup za validaciju modela
 X_train_data, X_valid_data, Y_train_data, Y_valid_data, = {}, {}, {}, {}
 for data in all_X_train_data:
+    # Različiti podaci svaki put
     # X_train, X_valid, y_train, y_valid = train_test_split(all_X_train_data[data], Y_train, random_state=11, test_size=0.1)
+    # Uvijek isti podaci:
     X_train, X_valid, y_train, y_valid = train_test_split(all_X_train_data[data], Y_train, test_size=0.1)
     X_train_data[data] = X_train
     X_valid_data[data] = X_valid
@@ -373,10 +383,6 @@ with open('A_preprocessing/divided_train_data.pickle', 'wb') as div:
     pickle.dump(divided_train_data, div)
 
 
-
-
-
-# random_state treba provjeriti!!
 
 
 

@@ -9,8 +9,8 @@ Potrebno je ispitati kombinacije različith C i setova podataka
 
 from A_preprocessing.Preprocessing import project_path
 # Ukoliko se žele stvarati novi podaci svaku skriptu, ovo NE treba biti zakomentirano
-# from A_preprocessing.Preprocessing import Y_train
-# from A_preprocessing.Preprocessing import divided_train_data, all_X_test_data
+from A_preprocessing.Preprocessing import Y_train
+from A_preprocessing.Preprocessing import divided_train_data, all_X_test_data
 
 
 import openpyxl, pickle, math, os
@@ -29,7 +29,7 @@ with open(project_path+'/A_preprocessing/all_X_test_data.pickle', 'rb') as f_tes
 
 
 
-# Funkcija koja računa točnost modela za određene podatkei  hiperparametar C
+# Funkcija koja računa točnost modela za određene podatke i hiperparametar C
 def logreg_f(C, X_train, Y_train, X_valid, Y_valid):
     logreg_model = LogisticRegression(C=C, max_iter=1e7)        # Broj iteracija povećan zbog poly podataka
     logreg_model.fit(X_train, Y_train)
@@ -44,9 +44,9 @@ def logreg_f(C, X_train, Y_train, X_valid, Y_valid):
 C_range = [10**i for i in range(-10,5)]      # raspon C hiperparametara
 xlsx_file = "B_Logistic_Regression/output/Acc_LogReg.xlsx"                # ime excel file u koji se spremaju rezultati, kasnije
 
+
 accuracy_dict = {}                           # spremanje parova (C:točnost za svaki C) za cijeli set podataka
 best_grid_acc = {}                           # spremanje najbolje točnosti za podatke
-
 
 # Iteriranje spremljenih podataka i analiza
 for data_name in divided_train_data["X_train_data"]:
@@ -123,9 +123,7 @@ def plot_accuracity(data_sets):
         plt.ylabel("Accuracity [%]")
         plt.title("Validation and Train acc comparison")
         plt.draw()
-
     plt.legend()
-    # plt.show()
     fig.savefig("B_Logistic_Regression/output/plot_LogReg.png", dpi=300)
 
 
@@ -169,12 +167,12 @@ Zaključci:
     - Točnost modela jako ovisi o odabiru random_state-a i podacima koji se uzimaju za train i validation set!
 
     - Najbolju točnost train seta pokazuju podaci koji su preslikani u višu dimenziju i to za 4 razine: točnost 88.23%
-        -> logično jer je model s više parametara lakše postaje prenaučen. 
+        -> logično jer je model s više parametara najlakše postaje prenaučen. 
 
-    - Skaliranje podataka utječe na model logističke regresije. Za ovaj primjer negativno jer unosi oscilacije u 
-        točnost modela od slučaja od slučaja dijeljenja istog seta podataka i nerijetko smanjuje točnost.
-        -> treba imati na umu da su ovdje svi podaci prebačeni u kategoričke varijable
-        
+    - Dobivaju se značajne razlike u točnosti za različite podatke od seta do seta podataka. 
+        Može li se to kako popraviti?
+
+    - Treba imati na umu da su ovdje svi podaci prebačeni u kategoričke varijable
             
     - Nakon provedene PCA analize dobiva se nešto manja točnost modela koja se manje smanjuje sa smanjivanjem
         broja dimenzija. Međutim konvergencija je značajno brža: koristan alat za veće skupove podataka 

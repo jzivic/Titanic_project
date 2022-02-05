@@ -47,7 +47,7 @@ def grid_search(data_name, X_train, Y_train, X_valid, Y_valid):
 
 
     # Postavljanje hiperparametara i excel datoteke za spremanje pretraživanja
-    xlsx_name = "C_SVM/output/Acc_SVM_"+data_name+".xlsx"                    # ime excel file u koji se spremaju rezultati, kasnije
+    xlsx_name = "C_SVM/output /Acc_SVM_"+data_name+".xlsx"                    # ime excel file u koji se spremaju rezultati, kasnije
     Acc_grid_search = pd.ExcelWriter(xlsx_name)             # stvaranje excela
     C_range = range(-10, 3)                                 # rang baze za C
     gamma_range = range(-20, 3)
@@ -224,10 +224,11 @@ for data_name in divided_train_data["X_train_data"]:
 
 """
 Zaključak:
-    -Točnost osnovnog inicijalnog modela SVC je 81.5% a modela s linearnom jezgrenom funkcijom 77%. 
+    -Točnost osnovnog inicijalnog modela train seta SVC je 81.5% a modela s linearnom jezgrenom funkcijom 77%. 
 
     -Točnost modela s rbf jezgrenom funkcijom je preko 88.23%. Negativna stvar je da za veće 
         vrijednosti C i gamma hiperparametara model sporije konvergira
+
     -Nakon provedene analize zaključuje se da su veće vrijednosti hiperparametara optimalne. 
     -C=1, gamma=1 su vrijednosti hiperparametara za koje model s osnovnim pokacima ima najbolju točnost
     
