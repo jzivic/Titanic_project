@@ -17,12 +17,25 @@ from sklearn.preprocessing import MinMaxScaler, StandardScaler
 from sklearn import decomposition
 
 global project_path
-project_path = "C:/Users/Josip/PycharmProjects/Titanic_project/"
+# project_path = "C:/Users/Josip/PycharmProjects/Titanic_project/"
+# output_folder = "C:/Users/Josip/PycharmProjects/Titanic_project/output_data"
 
-os.chdir(project_path)
+project_data = "C:/Users/Josip/PycharmProjects/Titanic_project/project_data/"   # trebaju biti input i output folderi
+
+
+input_data = project_data+ "input/"
+output_data = project_data+ "output/"
+
+
+if os.path.exists(output_data+"A_preprocessing") == False:        # pravi folder ako ne postoji
+    os.mkdir(output_data+"A_preprocessing")
+if os.path.exists(output_data+"A_preprocessing/category_diagrams") == False:        # pravi folder ako ne postoji
+    os.mkdir(output_data+"A_preprocessing/category_diagrams/")
+
+
 # Učitavanje podataka u DataFrame
-train_df = pd.read_csv('A_preprocessing/train.csv')
-test_df = pd.read_csv('A_preprocessing/test.csv')
+train_df = pd.read_csv(input_data+'train.csv')
+test_df = pd.read_csv(input_data+'test.csv')
 all_df = train_df.append(test_df)
 
 ##################################        1. Statistika i opći pregled        #########################################
@@ -36,7 +49,6 @@ def dots_2D(dataset, category_1,category_2):
     sns.swarmplot(y=category_1, x=category_2, hue="Survived", data=train_df)
     plt.show()
 # dots_2D(train_df, "Sex", "Age")
-
 
 
 
@@ -76,10 +88,11 @@ def survived_in_category(category):
 
     # brisanje foldera ako postoji i stvaranje praznog
     try:
-        shutil.rmtree("A_preprocessing/diagrams/"+category)
+        shutil.rmtree(output_data+"A_preprocessing/category_diagrams/"+category)
     except:
         FileNotFoundError
-    os.mkdir("A_preprocessing/diagrams/"+category)
+    os.mkdir(output_data+"A_preprocessing/category_diagrams/"+category)
+
 
 
     # Ukupan broj ljudi po kategoriji
@@ -92,7 +105,8 @@ def survived_in_category(category):
         plt.xlabel("Category")
         plt.bar(survived_rate[category], number_in_category)
         plt.draw()
-        plt.savefig("A_preprocessing/diagrams/"+category+"/Overall people in "+ category+".png", dpi=300)
+        plt.savefig(output_data+"A_preprocessing/category_diagrams/"+category+
+                    "/Overall people in "+ category+".png", dpi=300)
         plt.clf()
 
     # Postotak preživjelih ljudi po kategoriji
@@ -105,7 +119,8 @@ def survived_in_category(category):
         plt.xlabel("Category")
         plt.bar(survived_rate[category], survived_rate["Survived"]*100)
         plt.draw()
-        plt.savefig("A_preprocessing/diagrams/"+category+"/Survival percentage in "+ category+".png", dpi=300)
+        plt.savefig(output_data+"A_preprocessing/category_diagrams/"+category+
+                    "/Survival percentage in "+ category+".png", dpi=300)
         plt.clf()
 
     # Odnos brojeva preživjelih i umrlih ljudi po kategoriji (isti grafovi, drugi način)
@@ -118,7 +133,8 @@ def survived_in_category(category):
         plt.hist(survived_people[category], bins=10, color="blue", edgecolor="red", alpha=0.5, label="survived")
         plt.legend()
         plt.draw()
-        plt.savefig("A_preprocessing/diagrams/"+category+"/Survived and died ratio in "+ category+".png", dpi=300)
+        plt.savefig(output_data+"A_preprocessing/category_diagrams/"+category+
+                    "/Survived and died ratio in "+ category+".png", dpi=300)
         plt.clf()
 
     try:
@@ -129,13 +145,13 @@ def survived_in_category(category):
         pass
 
 
-# survived_in_category("Pclass")
-# survived_in_category("Sex")
-# survived_in_category("Age")
-# survived_in_category("SibSp")
-# survived_in_category("Parch")
-# survived_in_category("Fare")
-# survived_in_category("Embarked")
+survived_in_category("Pclass")
+survived_in_category("Sex")
+survived_in_category("Age")
+survived_in_category("SibSp")
+survived_in_category("Parch")
+survived_in_category("Fare")
+survived_in_category("Embarked")
 
 
 
@@ -147,7 +163,7 @@ def dots_2D(category_1, category_2):
     # sns.swarmplot(y=category_1, x=category_2, hue="Survived", data=train_df)
     plt.legend()
     plt.draw()
-    plt.savefig("A_preprocessing/diagrams/2D_"+category_1+"_"+category_2+".png", dpi=300)
+    plt.savefig(output_folder+"A_preprocessing/diagrams/2D_"+category_1+"_"+category_2+".png", dpi=300)
     plt.clf()
 
 # dots_2D(category_1="Sex", category_2="Age")
@@ -340,7 +356,11 @@ all_X_test_data = { "X": X_test,
                     "poly_scal_X": poly_scal_test,
                    }
 
-with open('A_preprocessing/all_X_test_data.pickle', 'wb') as f_test:    # spremanje riječnika u dictdf
+# with open(output_folder+'A_preprocessing/all_X_test_data.pickle', 'wb') as f_test:    # spremanje riječnika u dictdf
+#     pickle.dump(all_X_test_data, f_test)
+
+
+with open(input_data+'all_X_test_data.pickle', 'wb') as f_test:    # spremanje riječnika u dictdf
     pickle.dump(all_X_test_data, f_test)
 
 
@@ -379,11 +399,12 @@ divided_train_data = {
                     }
 
 # Spremanje podataka u rječnik
-with open('A_preprocessing/divided_train_data.pickle', 'wb') as div:
-    pickle.dump(divided_train_data, div)
+# with open(output_folder+'A_preprocessing/divided_train_data.pickle', 'wb') as div:
+#     pickle.dump(divided_train_data, div)
 
 
-
+with open(input_data+'divided_train_data.pickle', 'wb') as f_test:    # spremanje riječnika u dictdf
+    pickle.dump(all_X_test_data, f_test)
 
 
 
