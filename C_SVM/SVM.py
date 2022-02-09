@@ -10,13 +10,13 @@ Na kraju će se rezultati zapisati u excel datoteke posebno za svaki set podatak
 """
 
 
-from A_preprocessing.Preprocessing import project_path
+from A_preprocessing.Preprocessing import input_data, output_data
 # Ukoliko se žele stvarati novi podaci svaku skriptu, ovo NE treba biti zakomentirano
 # from A_preprocessing.Preprocessing import Y_train
 # from A_preprocessing.Preprocessing import divided_train_data, all_X_test_data
 
 
-import openpyxl, pickle
+import openpyxl, pickle, os, shutil
 import pandas as pd
 
 from sklearn.svm import SVC
@@ -24,11 +24,24 @@ from sklearn.metrics import accuracy_score
 
 
 # Učitavanje spremljenih podataka
-with open(project_path+'/A_preprocessing/divided_train_data.pickle', 'rb') as f_X_train:
+# with open(project_path+'/A_preprocessing/divided_train_data.pickle', 'rb') as f_X_train:
+#     divided_train_data = pickle.load(f_X_train)
+# with open(project_path+'/A_preprocessing/all_X_test_data.pickle', 'rb') as f_test:
+#     all_X_test_data = pickle.load(f_test)
+
+
+output_C = output_data+"C_SVM/"
+
+with open(input_data+'/divided_train_data.pickle', 'rb') as f_X_train:
     divided_train_data = pickle.load(f_X_train)
-with open(project_path+'/A_preprocessing/all_X_test_data.pickle', 'rb') as f_test:
+with open(input_data+'/all_X_test_data.pickle', 'rb') as f_test:
     all_X_test_data = pickle.load(f_test)
 
+try:
+    shutil.rmtree(output_C)
+except:
+    FileNotFoundError
+os.mkdir(output_C)
 
 
 # Velika SVM funkcija koja računa točnost za rbf, poly i linear jezgrene funkcije
@@ -47,7 +60,7 @@ def grid_search(data_name, X_train, Y_train, X_valid, Y_valid):
 
 
     # Postavljanje hiperparametara i excel datoteke za spremanje pretraživanja
-    xlsx_name = "C_SVM/output /Acc_SVM_"+data_name+".xlsx"                    # ime excel file u koji se spremaju rezultati, kasnije
+    xlsx_name = output_C+"Acc_SVM_"+data_name+".xlsx"                    # ime excel file u koji se spremaju rezultati, kasnije
     Acc_grid_search = pd.ExcelWriter(xlsx_name)             # stvaranje excela
     C_range = range(-10, 3)                                 # rang baze za C
     gamma_range = range(-20, 3)

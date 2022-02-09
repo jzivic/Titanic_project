@@ -5,21 +5,29 @@ za sve setove podataka u rangu 1-10.
 """
 
 
-from A_preprocessing.Preprocessing import project_path
+from A_preprocessing.Preprocessing import input_data, output_data
 from A_preprocessing.Preprocessing import Y_train
 from A_preprocessing.Preprocessing import divided_train_data, all_X_test_data
 from sklearn.metrics import accuracy_score
 
-import openpyxl, pickle, math, sklearn
+import openpyxl, pickle, os, shutil, math, sklearn
 import pandas as pd
 import matplotlib.pyplot as plt
 from sklearn.neighbors import KNeighborsClassifier
 
 
-with open(project_path+'/A_preprocessing/divided_train_data.pickle', 'rb') as f_X_train:
+output_D = output_data+"D_kNN/"
+
+with open(input_data+'/divided_train_data.pickle', 'rb') as f_X_train:
     divided_train_data = pickle.load(f_X_train)
-with open(project_path+'/A_preprocessing/all_X_test_data.pickle', 'rb') as f_test:
+with open(input_data+'/all_X_test_data.pickle', 'rb') as f_test:
     all_X_test_data = pickle.load(f_test)
+
+try:
+    shutil.rmtree(output_D)
+except:
+    FileNotFoundError
+os.mkdir(output_D)
 
 
 
@@ -34,7 +42,7 @@ def kNN_f(n_neighbors, X_train, Y_train, X_valid, Y_valid):
     return [acc_train, acc_valid]
 
 
-xlsx_file = "D_kNN/output/Acc_kNN.xlsx"  # ime excel file u koji se spremaju rezultati, kasnije
+xlsx_file = output_D+"Acc_kNN.xlsx"  # ime excel file u koji se spremaju rezultati, kasnije
 n_neigh_range = [i for i in range(1,41)]    # raspon za koji se računa analiza kNN broj susjeda
 accuracy_dict, best_n_neighb_acc = {}, {}    # parovi (n_neigh:točnost za svaki) te najbolje točnosti za data set
 
@@ -90,10 +98,8 @@ to_ecxel()
 
 def plot_accuracity(data_sets):
     for data in data_sets:
-
         valid_acc = list(zip(*accuracy_DF[data]))[1]
         train_acc = list(zip(*accuracy_DF[data]))[0]
-
         color = next(plt.gca()._get_lines.prop_cycler)['color']
         plt.plot(n_neigh_range, valid_acc,linestyle='-', c=color, label=data)
         plt.plot(n_neigh_range, train_acc, linestyle=':',  c=color)
@@ -107,7 +113,7 @@ def plot_accuracity(data_sets):
         plt.draw()
 
     plt.legend()
-    fig.savefig("D_kNN/output/plot_kNN.png", dpi=300)
+    fig.savefig(output_D+"plot_kNN.png", dpi=300)
 
 
 plot_accuracity(data_sets= [data for data in divided_train_data["X_train_data"]])

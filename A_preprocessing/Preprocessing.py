@@ -85,15 +85,12 @@ def survived_in_category(category):
         groupby([category], as_index=False).mean()\
         .sort_values(by='Survived', ascending=False)
 
-
     # brisanje foldera ako postoji i stvaranje praznog
     try:
         shutil.rmtree(output_data+"A_preprocessing/category_diagrams/"+category)
     except:
         FileNotFoundError
     os.mkdir(output_data+"A_preprocessing/category_diagrams/"+category)
-
-
 
     # Ukupan broj ljudi po kategoriji
     def overall_number():
@@ -145,25 +142,32 @@ def survived_in_category(category):
         pass
 
 
-survived_in_category("Pclass")
-survived_in_category("Sex")
-survived_in_category("Age")
-survived_in_category("SibSp")
-survived_in_category("Parch")
-survived_in_category("Fare")
-survived_in_category("Embarked")
+# survived_in_category("Pclass")
+# survived_in_category("Sex")
+# survived_in_category("Age")
+# survived_in_category("SibSp")
+# survived_in_category("Parch")
+# survived_in_category("Fare")
+# survived_in_category("Embarked")
 
 
 
 # Funkcija za plotanje 2D grafa: 2 kategorije i preživaljanje
 def dots_2D(category_1, category_2):
+
+    try:
+        shutil.rmtree(output_data+"A_preprocessing/2D_diagrams/")
+    except:
+        FileNotFoundError
+    os.mkdir(output_data+"A_preprocessing/2D_diagrams/")
+
     fig, ax = plt.subplots(figsize=(18, 5))
     ax.grid(True)
     plt.xticks(list(range(0, 100, 2)))
-    # sns.swarmplot(y=category_1, x=category_2, hue="Survived", data=train_df)
+    sns.swarmplot(y=category_1, x=category_2, hue="Survived", data=train_df)
     plt.legend()
     plt.draw()
-    plt.savefig(output_folder+"A_preprocessing/diagrams/2D_"+category_1+"_"+category_2+".png", dpi=300)
+    plt.savefig(output_data+"A_preprocessing/2D_diagrams/"+category_1+"_"+category_2+".png", dpi=300)
     plt.clf()
 
 # dots_2D(category_1="Sex", category_2="Age")
@@ -404,9 +408,7 @@ divided_train_data = {
 
 
 with open(input_data+'divided_train_data.pickle', 'wb') as f_test:    # spremanje riječnika u dictdf
-    pickle.dump(all_X_test_data, f_test)
-
-
+    pickle.dump(divided_train_data, f_test)
 
 
 

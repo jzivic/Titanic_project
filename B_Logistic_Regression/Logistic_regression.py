@@ -7,26 +7,31 @@ C - koeficijent dopuštene pogreške klasifikacije - obrnuto proporcionalni jač
 Potrebno je ispitati kombinacije različith C i setova podataka
 """
 
-from A_preprocessing.Preprocessing import project_path
+from A_preprocessing.Preprocessing import input_data, output_data
 # Ukoliko se žele stvarati novi podaci svaku skriptu, ovo NE treba biti zakomentirano
-from A_preprocessing.Preprocessing import Y_train
-from A_preprocessing.Preprocessing import divided_train_data, all_X_test_data
+# from A_preprocessing.Preprocessing import Y_train
+# from A_preprocessing.Preprocessing import divided_train_data, all_X_test_data
 
 
-import openpyxl, pickle, math, os
+import openpyxl, pickle, math, os, shutil
 import pandas as pd
 import matplotlib.pyplot as plt
 from sklearn.linear_model import LogisticRegression
 from sklearn.metrics import accuracy_score
 
 
+output_B = output_data+"B_Logistic_Regression/"
 
-# Učitavanje spremljenih podataka
-with open(project_path+'/A_preprocessing/divided_train_data.pickle', 'rb') as f_X_train:
+with open(input_data+'/divided_train_data.pickle', 'rb') as f_X_train:
     divided_train_data = pickle.load(f_X_train)
-with open(project_path+'/A_preprocessing/all_X_test_data.pickle', 'rb') as f_test:
+with open(input_data+'/all_X_test_data.pickle', 'rb') as f_test:
     all_X_test_data = pickle.load(f_test)
 
+try:
+    shutil.rmtree(output_B)
+except:
+    FileNotFoundError
+os.mkdir(output_B)
 
 
 # Funkcija koja računa točnost modela za određene podatke i hiperparametar C
@@ -37,13 +42,13 @@ def logreg_f(C, X_train, Y_train, X_valid, Y_valid):
     prediction = logreg_model.predict(X_valid)
     acc_valid = round(accuracy_score(prediction, Y_valid) *100,2)
     # error = round(sklearn.metrics.mean_squared_error(Y_valid, prediction), 2)  # kvadratna razlika 2 vektora
-
     return [acc_train, acc_valid]
 
+# C_range = [10**i for i in range(-10,5)]      # raspon C hiperparametara
 
-C_range = [10**i for i in range(-10,5)]      # raspon C hiperparametara
-xlsx_file = "B_Logistic_Regression/output/Acc_LogReg.xlsx"                # ime excel file u koji se spremaju rezultati, kasnije
+C_range = [10**i for i in range(-10,-0)]      #PROBA
 
+xlsx_file = output_B+"Acc_LogReg.xlsx"                # ime excel file u koji se spremaju rezultati, kasnije
 
 accuracy_dict = {}                           # spremanje parova (C:točnost za svaki C) za cijeli set podataka
 best_grid_acc = {}                           # spremanje najbolje točnosti za podatke
@@ -124,7 +129,7 @@ def plot_accuracity(data_sets):
         plt.title("Validation and Train acc comparison")
         plt.draw()
     plt.legend()
-    fig.savefig("B_Logistic_Regression/output/plot_LogReg.png", dpi=300)
+    fig.savefig(output_B+"plot_LogReg.png", dpi=300)
 
 
 # plot_accuracity(data_sets= ["X", "poly4_X"])
