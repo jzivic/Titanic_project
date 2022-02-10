@@ -16,21 +16,15 @@ from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import MinMaxScaler, StandardScaler
 from sklearn import decomposition
 
-global project_path
-# project_path = "C:/Users/Josip/PycharmProjects/Titanic_project/"
-# output_folder = "C:/Users/Josip/PycharmProjects/Titanic_project/output_data"
-
 project_data = "C:/Users/Josip/PycharmProjects/Titanic_project/project_data/"   # trebaju biti input i output folderi
-
-
-input_data = project_data+ "input/"
-output_data = project_data+ "output/"
-
+input_data, output_data = project_data+ "input/", project_data+ "output/"
 
 if os.path.exists(output_data+"A_preprocessing") == False:        # pravi folder ako ne postoji
     os.mkdir(output_data+"A_preprocessing")
 if os.path.exists(output_data+"A_preprocessing/category_diagrams") == False:        # pravi folder ako ne postoji
     os.mkdir(output_data+"A_preprocessing/category_diagrams/")
+
+always_same_data = True # određuje hoće li se korisitit random dijeljenje podataka za train set
 
 
 # Učitavanje podataka u DataFrame
@@ -39,18 +33,6 @@ test_df = pd.read_csv(input_data+'test.csv')
 all_df = train_df.append(test_df)
 
 ##################################        1. Statistika i opći pregled        #########################################
-
-
-
-def dots_2D(dataset, category_1,category_2):
-    fig,ax = plt.subplots(figsize=(18,5))
-    ax.grid(True)
-    plt.xticks(list(range(0,100,2)))
-    sns.swarmplot(y=category_1, x=category_2, hue="Survived", data=train_df)
-    plt.show()
-# dots_2D(train_df, "Sex", "Age")
-
-
 
 # Pregled varijabli i eventualni nedostatak podataka:
 # print(train_df.info())
@@ -384,10 +366,13 @@ all_X_train_data = {"X": X_train,
 # Skup za treniranje se dijeli na skup za treniranje i skup za validaciju modela
 X_train_data, X_valid_data, Y_train_data, Y_valid_data, = {}, {}, {}, {}
 for data in all_X_train_data:
-    # Različiti podaci svaki put
-    # X_train, X_valid, y_train, y_valid = train_test_split(all_X_train_data[data], Y_train, random_state=11, test_size=0.1)
-    # Uvijek isti podaci:
-    X_train, X_valid, y_train, y_valid = train_test_split(all_X_train_data[data], Y_train, test_size=0.1)
+
+    if always_same_data == True:
+        X_train, X_valid, y_train, y_valid = train_test_split(all_X_train_data[data], Y_train, random_state=11, test_size=0.1)
+    elif always_same_data == False:
+        X_train, X_valid, y_train, y_valid = train_test_split(all_X_train_data[data], Y_train, test_size=0.1)
+
+
     X_train_data[data] = X_train
     X_valid_data[data] = X_valid
     Y_train_data[data] = y_train    # y je ovdje, Y je sve skupa gore
@@ -403,16 +388,8 @@ divided_train_data = {
                     }
 
 # Spremanje podataka u rječnik
-# with open(output_folder+'A_preprocessing/divided_train_data.pickle', 'wb') as div:
-#     pickle.dump(divided_train_data, div)
-
-
 with open(input_data+'divided_train_data.pickle', 'wb') as f_test:    # spremanje riječnika u dictdf
     pickle.dump(divided_train_data, f_test)
-
-
-
-
 
 
 

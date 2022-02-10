@@ -1,16 +1,16 @@
 """
 Drugi dio: Logistička Regresija.
-Prvo je potrebno vidjeti kako se kreće točnost modela na
-različitim podacima te pronaći one koji pokazuju najbolju točnost modela. Paralelno s time potrebno je za
-svake podatke naći najbolje odgovarajući hiperparametar C=1/lambda.
+Prvo je potrebno vidjeti kako se kreće točnost modela na različitim podacima te pronaći one koji pokazuju
+najbolju točnost modela. Paralelno s time potrebno je za svake podatke naći najbolje odgovarajući
+hiperparametar C=1/lambda.
 C - koeficijent dopuštene pogreške klasifikacije - obrnuto proporcionalni jačini regularizacije lambda
 Potrebno je ispitati kombinacije različith C i setova podataka
 """
 
-from A_preprocessing.Preprocessing import input_data, output_data
+from Preprocessing import input_data, output_data
 # Ukoliko se žele stvarati novi podaci svaku skriptu, ovo NE treba biti zakomentirano
-# from A_preprocessing.Preprocessing import Y_train
-# from A_preprocessing.Preprocessing import divided_train_data, all_X_test_data
+from Preprocessing import divided_train_data, all_X_test_data
+from Preprocessing import Y_train
 
 
 import openpyxl, pickle, math, os, shutil
@@ -20,18 +20,19 @@ from sklearn.linear_model import LogisticRegression
 from sklearn.metrics import accuracy_score
 
 
-output_B = output_data+"B_Logistic_Regression/"
+output_Log_Reg = output_data+"B_Logistic_Regression/"       # folder gdje se spremaju rezultati
+xlsx_file = output_Log_Reg+"Acc_LogReg.xlsx"                # ime excel file u koji se spremaju rezultati
 
+# Ako ne postoji folder stvara novi, ako postoji briše datoteke
 with open(input_data+'/divided_train_data.pickle', 'rb') as f_X_train:
     divided_train_data = pickle.load(f_X_train)
 with open(input_data+'/all_X_test_data.pickle', 'rb') as f_test:
     all_X_test_data = pickle.load(f_test)
-
 try:
-    shutil.rmtree(output_B)
+    shutil.rmtree(output_Log_Reg)
 except:
     FileNotFoundError
-os.mkdir(output_B)
+os.mkdir(output_Log_Reg)
 
 
 # Funkcija koja računa točnost modela za određene podatke i hiperparametar C
@@ -44,11 +45,9 @@ def logreg_f(C, X_train, Y_train, X_valid, Y_valid):
     # error = round(sklearn.metrics.mean_squared_error(Y_valid, prediction), 2)  # kvadratna razlika 2 vektora
     return [acc_train, acc_valid]
 
-# C_range = [10**i for i in range(-10,5)]      # raspon C hiperparametara
 
-C_range = [10**i for i in range(-10,-0)]      #PROBA
-
-xlsx_file = output_B+"Acc_LogReg.xlsx"                # ime excel file u koji se spremaju rezultati, kasnije
+C_range = [10**i for i in range(-10,5)]      # raspon C hiperparametara
+# C_range = [10**i for i in range(-10,-0)]      #PROBA
 
 accuracy_dict = {}                           # spremanje parova (C:točnost za svaki C) za cijeli set podataka
 best_grid_acc = {}                           # spremanje najbolje točnosti za podatke
@@ -106,16 +105,15 @@ to_excel()
 
 
 """
-Funkcija plota točnost setova za treniranje i validaciju, za standardne podatke i poly4 podatke.
-Svi skalirani i PCA podaci imaju istu tendenciju rasta kao i standardni dok poly3 i poly 4 drugačije te se zato
-oni posebno plotaju.
+Funkcija plota točnost setova za treniranje i validaciju, za standardne podatke i poly4 podatke (ručno odabrano).
+Svi skalirani i PCA podaci imaju istu tendenciju rasta kao i standardni dok poly3 i poly 4 drugačije pa su iz tog 
+razloga odabrani za graf.
 """
-
 def plot_accuracity(data_sets):
-    C_log = [math.log(i[0], 10) for i in accuracy_DF.index] # logaritam(C) s bazom 10
+    C_log = [math.log(i[0], 10) for i in accuracy_DF.index]     # logaritam(C) s bazom 10
     for data in data_sets:
 
-        valid_acc = list(zip(*accuracy_DF[data]))[1]
+        valid_acc = list(zip(*accuracy_DF[data]))[1]        # vadi prvi element iz liste lista
         train_acc = list(zip(*accuracy_DF[data]))[0]
 
         color = next(plt.gca()._get_lines.prop_cycler)['color']
@@ -129,15 +127,14 @@ def plot_accuracity(data_sets):
         plt.title("Validation and Train acc comparison")
         plt.draw()
     plt.legend()
-    fig.savefig(output_B+"plot_LogReg.png", dpi=300)
-
+    fig.savefig(output_Log_Reg+"plot_LogReg.png", dpi=300)
 
 # plot_accuracity(data_sets= ["X", "poly4_X"])
 plot_accuracity(data_sets= ["X", "scal_std_X"])
 
 
 
-
+# Funkcija kojia ispisuje koeficijente korelacije (važnost svake kategorije u modelu)
 def Log_Reg_coeffs():
     X_train = divided_train_data["X_train_data"]["X"]
     Y_train = divided_train_data["Y_train_data"]["X"]
@@ -157,7 +154,7 @@ def Log_Reg_coeffs():
     coeff_df = coeff_df.reset_index(drop=True)
     print(coeff_df)
 
-# Log_Reg_coeffs()
+Log_Reg_coeffs()
 
 
 

@@ -10,10 +10,10 @@ Na kraju će se rezultati zapisati u excel datoteke posebno za svaki set podatak
 """
 
 
-from A_preprocessing.Preprocessing import input_data, output_data
+from Preprocessing import input_data, output_data
 # Ukoliko se žele stvarati novi podaci svaku skriptu, ovo NE treba biti zakomentirano
-# from A_preprocessing.Preprocessing import Y_train
-# from A_preprocessing.Preprocessing import divided_train_data, all_X_test_data
+# fromPreprocessing import Y_train
+# fromPreprocessing import divided_train_data, all_X_test_data
 
 
 import openpyxl, pickle, os, shutil
