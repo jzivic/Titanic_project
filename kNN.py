@@ -6,8 +6,8 @@ za sve setove podataka u rangu 1-10.
 
 
 from Preprocessing import input_data, output_data
-from Preprocessing import Y_train
-from Preprocessing import divided_train_data, all_X_test_data
+# from Preprocessing import Y_train
+# from Preprocessing import divided_train_data, all_X_test_data
 from sklearn.metrics import accuracy_score
 
 import openpyxl, pickle, os, shutil, math, sklearn
@@ -16,7 +16,7 @@ import matplotlib.pyplot as plt
 from sklearn.neighbors import KNeighborsClassifier
 
 
-output_D = output_data+"D_kNN/"
+output_kNN = output_data+"D_kNN/"
 
 with open(input_data+'/divided_train_data.pickle', 'rb') as f_X_train:
     divided_train_data = pickle.load(f_X_train)
@@ -24,10 +24,10 @@ with open(input_data+'/all_X_test_data.pickle', 'rb') as f_test:
     all_X_test_data = pickle.load(f_test)
 
 try:
-    shutil.rmtree(output_D)
+    shutil.rmtree(output_kNN)
 except:
     FileNotFoundError
-os.mkdir(output_D)
+os.mkdir(output_kNN)
 
 
 
@@ -42,7 +42,7 @@ def kNN_f(n_neighbors, X_train, Y_train, X_valid, Y_valid):
     return [acc_train, acc_valid]
 
 
-xlsx_file = output_D+"Acc_kNN.xlsx"  # ime excel file u koji se spremaju rezultati, kasnije
+xlsx_file = output_kNN+"Acc_kNN.xlsx"  # ime excel file u koji se spremaju rezultati, kasnije
 n_neigh_range = [i for i in range(1,41)]    # raspon za koji se računa analiza kNN broj susjeda
 accuracy_dict, best_n_neighb_acc = {}, {}    # parovi (n_neigh:točnost za svaki) te najbolje točnosti za data set
 
@@ -113,7 +113,7 @@ def plot_accuracity(data_sets):
         plt.draw()
 
     plt.legend()
-    fig.savefig(output_D+"plot_kNN.png", dpi=300)
+    fig.savefig(output_kNN+"plot_kNN.png", dpi=300)
 
 
 plot_accuracity(data_sets= [data for data in divided_train_data["X_train_data"]])

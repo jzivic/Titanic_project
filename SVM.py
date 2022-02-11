@@ -15,22 +15,12 @@ from Preprocessing import input_data, output_data
 # fromPreprocessing import Y_train
 # fromPreprocessing import divided_train_data, all_X_test_data
 
-
 import openpyxl, pickle, os, shutil
 import pandas as pd
-
 from sklearn.svm import SVC
 from sklearn.metrics import accuracy_score
 
-
-# Učitavanje spremljenih podataka
-# with open(project_path+'/A_preprocessing/divided_train_data.pickle', 'rb') as f_X_train:
-#     divided_train_data = pickle.load(f_X_train)
-# with open(project_path+'/A_preprocessing/all_X_test_data.pickle', 'rb') as f_test:
-#     all_X_test_data = pickle.load(f_test)
-
-
-output_C = output_data+"C_SVM/"
+output_SVM = output_data+"C_SVM/"
 
 with open(input_data+'/divided_train_data.pickle', 'rb') as f_X_train:
     divided_train_data = pickle.load(f_X_train)
@@ -38,10 +28,10 @@ with open(input_data+'/all_X_test_data.pickle', 'rb') as f_test:
     all_X_test_data = pickle.load(f_test)
 
 try:
-    shutil.rmtree(output_C)
+    shutil.rmtree(output_SVM)
 except:
     FileNotFoundError
-os.mkdir(output_C)
+os.mkdir(output_SVM)
 
 
 # Velika SVM funkcija koja računa točnost za rbf, poly i linear jezgrene funkcije
@@ -60,7 +50,7 @@ def grid_search(data_name, X_train, Y_train, X_valid, Y_valid):
 
 
     # Postavljanje hiperparametara i excel datoteke za spremanje pretraživanja
-    xlsx_name = output_C+"Acc_SVM_"+data_name+".xlsx"                    # ime excel file u koji se spremaju rezultati, kasnije
+    xlsx_name = output_SVM+"Acc_SVM_"+data_name+".xlsx"                    # ime excel file u koji se spremaju rezultati, kasnije
     Acc_grid_search = pd.ExcelWriter(xlsx_name)             # stvaranje excela
     C_range = range(-10, 3)                                 # rang baze za C
     gamma_range = range(-20, 3)
@@ -69,9 +59,9 @@ def grid_search(data_name, X_train, Y_train, X_valid, Y_valid):
     best_grid_acc = {"radial_base":[], "poly":[], "linear":[]}
 
     # isprobavanje jel radi
-    C_range = range(-5, -1)  # Pretraživanje se provodi u ovim rangovima     # proba
-    gamma_range = range(1, 5)
-    best_grid_acc = {"radial_base":[]}
+    # C_range = range(-5, -1)  # Pretraživanje se provodi u ovim rangovima     # proba
+    # gamma_range = range(1, 5)
+    # best_grid_acc = {"radial_base":[]}
 
 
     def radial_base_function():
@@ -112,10 +102,10 @@ def grid_search(data_name, X_train, Y_train, X_valid, Y_valid):
 
 
     def poly_function():
-        # C_range_poly = range(-10, 5)
-        # gamma_range_poly = range(-10, -1)
-        gamma_range_poly = range(-10, -9)       # pomoćne vrijednosti za isprobavanje
-        C_range_poly = range(-10, -9)
+        C_range_poly = range(-10, 5)
+        gamma_range_poly = range(-10, -1)
+        # gamma_range_poly = range(-10, -9)       # pomoćne vrijednosti za isprobavanje
+        # C_range_poly = range(-10, -9)
 
         accuracity_matrix = {}
         max_acc = 0
@@ -129,7 +119,7 @@ def grid_search(data_name, X_train, Y_train, X_valid, Y_valid):
                 acc_train = round(svcModel.score(X_train, Y_train) * 100, 2)
                 prediction = svcModel.predict(X_valid)
                 acc_valid = round(accuracy_score(prediction, Y_valid) * 100, 2)
-                current_sim_number(c_, gamma_, C_range_poly, gamma_range_poly)
+                # current_sim_number(c_, gamma_, C_range_poly, gamma_range_poly)
 
                 if acc_valid > max_acc:                                            # traženje najbolje točnosti
                     n_gamma, n_C = gamma_range_poly.index(gamma_), C_range_poly.index(c_)
@@ -153,8 +143,8 @@ def grid_search(data_name, X_train, Y_train, X_valid, Y_valid):
 
     def linear_function():
         gamma_range_linear = [1]
-        # C_range_linear = range(-15, 5)
-        C_range_linear = range(-15, -10)
+        C_range_linear = range(-15, 5)
+        # C_range_linear = range(-15, -10)
 
         accuracity_matrix = {}
         max_acc = 0
@@ -167,11 +157,8 @@ def grid_search(data_name, X_train, Y_train, X_valid, Y_valid):
                 acc_train = round(svcModel.score(X_train, Y_train) * 100, 2)
                 prediction = svcModel.predict(X_valid)
                 acc_valid = round(accuracy_score(prediction, Y_valid) * 100, 2)
-
                 accuracity_matrix[1].append([acc_train, acc_valid])
-
-
-                current_sim_number(c_, gamma_, C_range_linear, gamma_range_linear)
+                # current_sim_number(c_, gamma_, C_range_linear, gamma_range_linear)
 
                 if acc_valid > max_acc:                                            # traženje najbolje točnosti
                     n_gamma, n_C = gamma_range_linear.index(gamma_), C_range_linear.index(c_)
@@ -181,16 +168,11 @@ def grid_search(data_name, X_train, Y_train, X_valid, Y_valid):
                     n_gamma, n_C = gamma_range_linear.index(gamma_), C_range_linear.index(c_)
                     best_grid_acc["linear"].append([n_C, n_gamma])
 
-
         ind_names = ["{:.2e}".format(C_f(i)) for i in C_range_linear]
         accuracity_matrix = pd.DataFrame(accuracity_matrix, index=ind_names)
         accuracity_matrix.to_excel(Acc_grid_search, sheet_name="linear", startcol=0, startrow=0)        # Redovi su vrijednosti C, kolone vrijednosti gamma
 
     linear_function()
-
-
-
-
 
 
     Acc_grid_search.save()                              # Spremanje DF u excel file

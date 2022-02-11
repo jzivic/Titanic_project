@@ -166,7 +166,7 @@ Zaključci:
     - Nakon ispitivanja zaključak je da su za različite podatke različiti hiperparametri C najbolji izbor,
         ovisno o podacima.
 
-    - Točnost modela jako ovisi o odabiru random_state-a i podacima koji se uzimaju za train i validation set!
+    - Točnost modela dosta ovisi o odabiru random_state-a i podacima koji se uzimaju za train i validation set!
 
     - Najbolju točnost train seta pokazuju podaci koji su preslikani u višu dimenziju i to za 4 razine: točnost 88.23%
         -> logično jer je model s više parametara najlakše postaje prenaučen. 

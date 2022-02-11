@@ -24,8 +24,8 @@ if os.path.exists(output_data+"A_preprocessing") == False:        # pravi folder
 if os.path.exists(output_data+"A_preprocessing/category_diagrams") == False:        # pravi folder ako ne postoji
     os.mkdir(output_data+"A_preprocessing/category_diagrams/")
 
-always_same_data = True # određuje hoće li se korisitit random dijeljenje podataka za train set
 
+always_same_data = True # određuje hoće li se korisitit random dijeljenje podataka za train set
 
 # Učitavanje podataka u DataFrame
 train_df = pd.read_csv(input_data+'train.csv')
@@ -356,10 +356,10 @@ all_X_train_data = {"X": X_train,
                     "scal_MM_X": scal_MM_X_train,
                     "poly3_X": poly3_X_train,
                     "poly4_X": poly4_X_train,
-                    # "pca_6_X": pca_6_X_train,
-                    # "pca_5_X": pca_5_X_train,
-                    # "pca_4_X": pca_4_X_train,
-                    # "poly_scal_X": poly_scal_train
+                    "pca_6_X": pca_6_X_train,
+                    "pca_5_X": pca_5_X_train,
+                    "pca_4_X": pca_4_X_train,
+                    "poly_scal_X": poly_scal_train
                     }
 
 
