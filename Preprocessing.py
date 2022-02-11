@@ -372,7 +372,6 @@ for data in all_X_train_data:
     elif always_same_data == False:
         X_train, X_valid, y_train, y_valid = train_test_split(all_X_train_data[data], Y_train, test_size=0.1)
 
-
     X_train_data[data] = X_train
     X_valid_data[data] = X_valid
     Y_train_data[data] = y_train    # y je ovdje, Y je sve skupa gore
@@ -394,7 +393,8 @@ with open(input_data+'divided_train_data.pickle', 'wb') as f_test:    # spremanj
 
 
 
-
+for i in divided_train_data["X_train_data"]:
+    print(i)
 
 
 
