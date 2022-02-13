@@ -213,7 +213,7 @@ Y_train = train_filtered_data[1]
 train_filtered_data = transform_data(test_df, set_for_train=False)
 X_test = train_filtered_data[0]
 
-
+# print(len(Y_train))
 
 
 
@@ -364,7 +364,7 @@ all_X_train_data = {"X": X_train,
 
 
 # Skup za treniranje se dijeli na skup za treniranje i skup za validaciju modela
-X_train_data, X_valid_data, Y_train_data, Y_valid_data, = {}, {}, {}, {}
+X_train_data, X_valid_data, Y_train_data, Y_valid_data, X_all_data, Y_all_data = {}, {}, {}, {}, {}, {}
 for data in all_X_train_data:
 
     if always_same_data == True:
@@ -372,10 +372,14 @@ for data in all_X_train_data:
     elif always_same_data == False:
         X_train, X_valid, y_train, y_valid = train_test_split(all_X_train_data[data], Y_train, test_size=0.1)
 
+
     X_train_data[data] = X_train
     X_valid_data[data] = X_valid
     Y_train_data[data] = y_train    # y je ovdje, Y je sve skupa gore
     Y_valid_data[data] = y_valid
+
+    X_all_data[data] = all_X_train_data[data]
+    Y_all_data[data] = Y_train
 
 
 # Ukupni podijeljenji podaci
@@ -384,7 +388,12 @@ divided_train_data = {
                     "X_valid_data": X_valid_data,
                     "Y_train_data": Y_train_data,
                     "Y_valid_data": Y_valid_data,
+
+                    "X_all_data": X_all_data,
+                    "Y_all_data": Y_all_data,
                     }
+
+
 
 # Spremanje podataka u rječnik
 with open(input_data+'divided_train_data.pickle', 'wb') as f_test:    # spremanje riječnika u dictdf
@@ -392,12 +401,18 @@ with open(input_data+'divided_train_data.pickle', 'wb') as f_test:    # spremanj
 
 
 
+# print(divided_train_data["X_train_data"])
+# print("\n"*5)
+# print(divided_train_data["X_all_data"])
 
-for i in divided_train_data["X_train_data"]:
-    print(i)
+
+# for i in divided_train_data["X_all_data"]:
+#     print(i)
 
 
-
+# print(divided_train_data["X_all_data"])
+# print("\n"*5)
+# print(divided_train_data["Y_all_data"])
 
 
 
