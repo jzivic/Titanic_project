@@ -368,17 +368,16 @@ X_train_data, X_valid_data, Y_train_data, Y_valid_data, X_all_data, Y_all_data =
 for data in all_X_train_data:
 
     if always_same_data == True:
-        X_train, X_valid, y_train, y_valid = train_test_split(all_X_train_data[data], Y_train, random_state=11, test_size=0.1)
+        X_train, X_valid, y_train, y_valid = train_test_split(all_X_train_data[data], Y_train, random_state=True, test_size=0.1)
     elif always_same_data == False:
         X_train, X_valid, y_train, y_valid = train_test_split(all_X_train_data[data], Y_train, test_size=0.1)
 
-
     X_train_data[data] = X_train
     X_valid_data[data] = X_valid
+    X_all_data[data] = all_X_train_data[data]
+
     Y_train_data[data] = y_train    # y je ovdje, Y je sve skupa gore
     Y_valid_data[data] = y_valid
-
-    X_all_data[data] = all_X_train_data[data]
     Y_all_data[data] = Y_train
 
 
@@ -400,19 +399,6 @@ with open(input_data+'divided_train_data.pickle', 'wb') as f_test:    # spremanj
     pickle.dump(divided_train_data, f_test)
 
 
-
-# print(divided_train_data["X_train_data"])
-# print("\n"*5)
-# print(divided_train_data["X_all_data"])
-
-
-# for i in divided_train_data["X_all_data"]:
-#     print(i)
-
-
-# print(divided_train_data["X_all_data"])
-# print("\n"*5)
-# print(divided_train_data["Y_all_data"])
 
 
 

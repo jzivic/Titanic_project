@@ -46,8 +46,8 @@ def logreg_f(C, X_train, Y_train, X_valid, Y_valid):
     return [acc_train, acc_valid]
 
 
-C_range = [10**i for i in range(-10,5)]      # raspon C hiperparametara
-# C_range = [10**i for i in range(-10,-0)]      #PROBA
+# C_range = [10**i for i in range(-10,5)]      # raspon C hiperparametara
+C_range = [10**i for i in range(-10,0)]      #PROBA
 
 accuracy_dict = {}                           # spremanje parova (C:točnost za svaki C) za cijeli set podataka
 best_grid_acc = {}                           # spremanje najbolje točnosti za podatke
@@ -55,8 +55,9 @@ best_grid_acc = {}                           # spremanje najbolje točnosti za p
 # Iteriranje spremljenih podataka i analiza
 for data_name in divided_train_data["X_train_data"]:
     X_train = divided_train_data["X_train_data"][data_name]
-    Y_train = divided_train_data["Y_train_data"][data_name]
     X_valid = divided_train_data["X_valid_data"][data_name]
+
+    Y_train = divided_train_data["Y_train_data"][data_name]
     Y_valid = divided_train_data["Y_valid_data"][data_name]
 
     max_acc = 0
@@ -129,16 +130,16 @@ def plot_accuracity(data_sets):
     plt.legend()
     fig.savefig(output_Log_Reg+"plot_LogReg.png", dpi=300)
 
-# plot_accuracity(data_sets= ["X", "poly4_X"])
-plot_accuracity(data_sets= ["X", "scal_std_X"])
+plot_accuracity(data_sets= ["X", "poly4_X"])
+# plot_accuracity(data_sets= ["X", "scal_std_X"])
 
 
 
 # Funkcija kojia ispisuje koeficijente korelacije (važnost svake kategorije u modelu)
 def Log_Reg_coeffs():
     X_train = divided_train_data["X_train_data"]["X"]
-    Y_train = divided_train_data["Y_train_data"]["X"]
     X_valid = divided_train_data["X_valid_data"]["X"]
+    Y_train = divided_train_data["Y_train_data"]["X"]
     Y_valid = divided_train_data["Y_valid_data"]["X"]
 
     logreg_model = LogisticRegression(C=C, max_iter=1e7)        # Broj iteracija povećan zbog poly podataka
