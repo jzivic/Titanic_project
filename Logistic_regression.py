@@ -46,8 +46,8 @@ def logreg_f(C, X_train, Y_train, X_valid, Y_valid):
     return [acc_train, acc_valid]
 
 
-# C_range = [10**i for i in range(-10,5)]      # raspon C hiperparametara
-C_range = [10**i for i in range(-10,0)]      #PROBA
+C_range = [10**i for i in range(-10,5)]      # raspon C hiperparametara
+# C_range = [10**i for i in range(-10,0)]      #PROBA
 
 accuracy_dict = {}                           # spremanje parova (C:točnost za svaki C) za cijeli set podataka
 best_grid_acc = {}                           # spremanje najbolje točnosti za podatke
@@ -155,7 +155,7 @@ def Log_Reg_coeffs():
     coeff_df = coeff_df.reset_index(drop=True)
     print(coeff_df)
 
-Log_Reg_coeffs()
+# Log_Reg_coeffs()
 
 
 

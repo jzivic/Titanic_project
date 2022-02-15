@@ -116,8 +116,8 @@ def plot_accuracity(data_sets):
     fig.savefig(output_kNN+"plot_kNN.png", dpi=300)
 
 
-plot_accuracity(data_sets= [data for data in divided_train_data["X_train_data"]])
-# plot_accuracity(data_sets= ["X", "poly4_X"])
+# plot_accuracity(data_sets= [data for data in divided_train_data["X_train_data"]])
+plot_accuracity(data_sets= ["X", "poly4_X"])
 # plot_accuracity(data_sets= ["X", "scal_std_X"])
 
 

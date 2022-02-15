@@ -26,15 +26,14 @@ os.mkdir(final_prediction)
 
 
 def chosen_model_LogReg(data_set):
-    logreg_model = LogisticRegression(C=10e-7, max_iter=1e7)        # Broj iteracija povećan zbog poly podataka
     # logreg_model = LogisticRegression(C=10e-5, max_iter=1e7)        # Broj iteracija povećan zbog poly podataka
+    logreg_model = LogisticRegression(C=10**2)        # Broj iteracija povećan zbog poly podataka
     # logreg_model.fit(divided_train_data["X_all_data"][data_set], divided_train_data["Y_all_data"][data_set])
     logreg_model.fit(divided_train_data["X_train_data"][data_set], divided_train_data["Y_train_data"][data_set])
     prediction = logreg_model.predict(all_X_test_data[data_set])
     # print(prediction)
     return prediction
 pred_LogReg = chosen_model_LogReg(data_set="X")
-# pred_LogReg = chosen_model_LogReg(data_set="poly4_X")
 
 
 

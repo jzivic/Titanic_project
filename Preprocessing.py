@@ -25,7 +25,7 @@ if os.path.exists(output_data+"A_preprocessing/category_diagrams") == False:    
     os.mkdir(output_data+"A_preprocessing/category_diagrams/")
 
 
-always_same_data = True # određuje hoće li se korisitit random dijeljenje podataka za train set
+always_same_data = True  # određuje hoće li se korisitit random dijeljenje podataka za train set, kraj skripte
 
 # Učitavanje podataka u DataFrame
 train_df = pd.read_csv(input_data+'train.csv')
@@ -198,6 +198,9 @@ def transform_data(input_df, set_for_train):
         X_data = input_df.drop(columns=["Survived"])        # Za train set treba izbaciti "Survived" kategoriju
         Y_data = input_df["Survived"]
 
+        print(X_data)
+        print(Y_data)
+
     elif set_for_train == False:
         X_data = input_df                   # Za test set ne postoji "Survived" kategorija
         Y_data = None
@@ -342,9 +345,6 @@ all_X_test_data = { "X": X_test,
                     "poly_scal_X": poly_scal_test,
                    }
 
-# with open(output_folder+'A_preprocessing/all_X_test_data.pickle', 'wb') as f_test:    # spremanje riječnika u dictdf
-#     pickle.dump(all_X_test_data, f_test)
-
 
 with open(input_data+'all_X_test_data.pickle', 'wb') as f_test:    # spremanje riječnika u dictdf
     pickle.dump(all_X_test_data, f_test)
@@ -368,7 +368,8 @@ X_train_data, X_valid_data, Y_train_data, Y_valid_data, X_all_data, Y_all_data =
 for data in all_X_train_data:
 
     if always_same_data == True:
-        X_train, X_valid, y_train, y_valid = train_test_split(all_X_train_data[data], Y_train, random_state=True, test_size=0.1)
+        X_train, X_valid, y_train, y_valid = train_test_split(all_X_train_data[data], Y_train,
+                                                              random_state=True, test_size=0.1)
     elif always_same_data == False:
         X_train, X_valid, y_train, y_valid = train_test_split(all_X_train_data[data], Y_train, test_size=0.1)
 
@@ -397,6 +398,7 @@ divided_train_data = {
 # Spremanje podataka u rječnik
 with open(input_data+'divided_train_data.pickle', 'wb') as f_test:    # spremanje riječnika u dictdf
     pickle.dump(divided_train_data, f_test)
+
 
 
 
