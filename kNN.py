@@ -69,8 +69,8 @@ for data_name in divided_train_data["X_train_data"]:
     accuracy_dict[data_name] = acc_for_data  # dodavanje svih točnosti u rječnik
 
 
-accuracy_DF = pd.DataFrame(accuracy_dict, index=[n_neigh_range])  # kreiranje DataFrame-a
-accuracy_DF.to_excel(xlsx_file, sheet_name="Accuracity")                     # zapisivanje excel file-a
+accuracy_DF = pd.DataFrame(accuracy_dict, index=[n_neigh_range])  # kreiranje DataFrame-project_data
+accuracy_DF.to_excel(xlsx_file, sheet_name="Accuracity")                     # zapisivanje excel file-project_data
 
 
 

@@ -77,7 +77,7 @@ for data_name in divided_train_data["X_train_data"]:
 
     accuracy_dict[data_name] = acc_for_data         # dodavanje svih točnosti u rječnik
 
-accuracy_DF = pd.DataFrame(accuracy_dict, index=[C_range])  # kreiranje DataFrame-a
+accuracy_DF = pd.DataFrame(accuracy_dict, index=[C_range])  # kreiranje DataFrame-project_data
 
 
 
@@ -85,7 +85,7 @@ accuracy_DF = pd.DataFrame(accuracy_dict, index=[C_range])  # kreiranje DataFram
 
 # Funkcija koja zapisuje sve točnosti u excel
 def to_excel():
-    accuracy_DF.to_excel(xlsx_file, sheet_name="Accuracity")                     # zapisivanje excel file-a
+    accuracy_DF.to_excel(xlsx_file, sheet_name="Accuracity")                     # zapisivanje excel file-project_data
     # Zapisivanje oznake za C u tablicu i bojanje oznake
     workbook = openpyxl.load_workbook(xlsx_file)
     workbook.get_sheet_by_name("Accuracity").cell(row=1, column=1).value = "C"
@@ -167,7 +167,7 @@ Zaključci:
     - Nakon ispitivanja zaključak je da su za različite podatke različiti hiperparametri C najbolji izbor,
         ovisno o podacima.
 
-    - Točnost modela dosta ovisi o odabiru random_state-a i podacima koji se uzimaju za train i validation set!
+    - Točnost modela dosta ovisi o odabiru random_state-project_data i podacima koji se uzimaju za train i validation set!
 
     - Najbolju točnost train seta pokazuju podaci koji su preslikani u višu dimenziju i to za 4 razine: točnost 88.23%
         -> logično jer je model s više parametara najlakše postaje prenaučen. 

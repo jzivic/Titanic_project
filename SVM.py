@@ -66,7 +66,7 @@ def grid_search(data_name, X_train, Y_train, X_valid, Y_valid):
 
     def radial_base_function():
         accuracity_matrix = {}
-        max_acc = 0                           # inicijalno postavljanje najbolje točnosti i array-a pozicija
+        max_acc = 0                           # inicijalno postavljanje najbolje točnosti i array-project_data pozicija
 
         for gamma_ in gamma_range:                          # Pretraživanje za jedan red (C=..)
             gamma_str = "{:.2e}".format(gamma_f(gamma_))
@@ -83,14 +83,14 @@ def grid_search(data_name, X_train, Y_train, X_valid, Y_valid):
                     n_gamma, n_C = gamma_range.index(gamma_), C_range.index(c_)
                     max_acc = acc_valid
                     best_grid_acc["radial_base"] = [[n_C, n_gamma]]
-                elif acc_valid == max_acc:                                      # nadopunjavanje array-a za naj točnost
+                elif acc_valid == max_acc:                                      # nadopunjavanje array-project_data za naj točnost
                     n_gamma, n_C = gamma_range.index(gamma_), C_range.index(c_)
                     best_grid_acc["radial_base"].append([n_C, n_gamma])
 
-                accuracity_matrix[gamma_str].append([acc_train, acc_valid])                # punjenje stupaca DataFrame-a
+                accuracity_matrix[gamma_str].append([acc_train, acc_valid])                # punjenje stupaca DataFrame-project_data
                 # current_sim_number(c_, gamma_, C_range, gamma_range)       # ispisuje gotove simulacije
 
-        ind_names = ["{:.2e}".format(C_f(i)) for i in C_range]          # imena indexa DataFrame-a, gamma=.. podaci
+        ind_names = ["{:.2e}".format(C_f(i)) for i in C_range]          # imena indexa DataFrame-project_data, gamma=.. podaci
         accuracity_matrix = pd.DataFrame(accuracity_matrix, index=ind_names)
 
         # Redovi su vrijednosti C, kolone vrijednosti gamma
@@ -126,11 +126,11 @@ def grid_search(data_name, X_train, Y_train, X_valid, Y_valid):
                     max_acc = acc_valid
                     best_grid_acc["poly"] = [[n_C, n_gamma]]
 
-                elif acc_valid == max_acc:                                      # nadopunjavanje array-a za naj točnost
+                elif acc_valid == max_acc:                                      # nadopunjavanje array-project_data za naj točnost
                     n_gamma, n_C = gamma_range_poly.index(gamma_), C_range_poly.index(c_)
                     best_grid_acc["poly"].append([n_C, n_gamma])
 
-                accuracity_matrix[gamma_str].append([acc_train, acc_valid])  # punjenje stupaca DataFrame-a
+                accuracity_matrix[gamma_str].append([acc_train, acc_valid])  # punjenje stupaca DataFrame-project_data
 
         ind_names = ["{:.2e}".format(C_f(i)) for i in C_range_poly]
         accuracity_matrix = pd.DataFrame(accuracity_matrix, index=ind_names)
@@ -164,7 +164,7 @@ def grid_search(data_name, X_train, Y_train, X_valid, Y_valid):
                     n_gamma, n_C = gamma_range_linear.index(gamma_), C_range_linear.index(c_)
                     max_acc = acc_valid
                     best_grid_acc["linear"] = [[n_C, n_gamma]]
-                elif acc_valid == max_acc:                                      # nadopunjavanje array-a za naj točnost
+                elif acc_valid == max_acc:                                      # nadopunjavanje array-project_data za naj točnost
                     n_gamma, n_C = gamma_range_linear.index(gamma_), C_range_linear.index(c_)
                     best_grid_acc["linear"].append([n_C, n_gamma])
 
@@ -219,7 +219,7 @@ for data_name in divided_train_data["X_train_data"]:
 
 """
 Zaključak:
-    -Točnost osnovnog inicijalnog modela train seta SVC je 81.5% a modela s linearnom jezgrenom funkcijom 77%. 
+    -Točnost osnovnog inicijalnog modela train seta SVC je 81.5% project_data modela s linearnom jezgrenom funkcijom 77%. 
 
     -Točnost modela s rbf jezgrenom funkcijom je preko 88.23%. Negativna stvar je da za veće 
         vrijednosti C i gamma hiperparametara model sporije konvergira

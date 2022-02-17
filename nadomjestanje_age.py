@@ -5,7 +5,7 @@ napraviti s nepotpunim podacima. Kako bi se dobili što bolji rezultati, podaci 
 dići u prostor viših značajki te provesti Principal Component Analysis (PCA) analizu.
 """
 
-import pickle, shutil, os
+import pickle, shutil, os, math
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
@@ -16,7 +16,11 @@ from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import MinMaxScaler, StandardScaler
 from sklearn import decomposition
 
-project_data = "C:/Users/Josip/PycharmProjects/Titanic_project/project_data/"   # trebaju biti input i output folderi
+project_data_win = "C:/Users/Josip/PycharmProjects/Titanic_project/project_data/"   # trebaju biti input i output folderi
+project_data_linux = "//home/josip/PycharmProjects/Titanic_project/project_data/"
+
+
+project_data = project_data_linux
 input_data, output_data = project_data+ "input/", project_data+ "output/"
 
 if os.path.exists(output_data+"A_preprocessing") == False:        # pravi folder ako ne postoji
@@ -143,23 +147,39 @@ def kNN_f(n_neighb):
     # print(prediction)
     return prediction
 
-# n_neigh_range = [i for i in range(1,21)]
+
+
+
+n_neigh_range = [i for i in range(1,21)]
 # for i in n_neigh_range:
 #     kNN_f(i)
 
-
-# train_df["Age"]
-
-
+# kNN_f(12)
+# df.loc[df['First Season'] > 1990, 'First Season'] = 1
 
 
+train_df["nan"] = [math.isnan(i) for i in train_df["Age"]]
+nan_df = train_df[train_df["nan"] == True]
 
-
-
-
+nan_df = nan_df.drop(columns=["nan", "Age", "Cabin", "Ticket", "PassengerId", "Name"])
 
 
 
+knn_model = KNeighborsClassifier(n_neighbors=12)
+knn_model.fit(x_ostalo, y_godine)
+prediction = knn_model.predict(nan_df)
+
+# print(x_1)
+# print(nan_df)
+
+# for i,j in zip(x_1, nan_df):
+#     print(i,j)
+
+
+
+
+# b = train_df[math.isnan(train_df["Age"]) == True]
+# print(b)
 
 
 
@@ -168,4 +188,12 @@ def kNN_f(n_neighb):
 
 
 
+# b = train_df[train_df["PassengerId"] > 888]
 
+# df1 = df[df.isna(axis=1).any()]
+
+# b = train_df['Age'].isnull().values.any()     # provjerava ima li i jedna vrijednost null
+
+# df2 = pd.DataFrame(data=None, columns=df1.columns, index=df1.index)   kopiranje praznog dataframe-a
+
+ # math.isnan(x):

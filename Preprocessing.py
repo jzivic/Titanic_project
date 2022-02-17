@@ -421,7 +421,7 @@ print()
 
 # mapiranje / preslikavanje
 # maping = {"male":1, "female":2}
-# a = train_df["Sex"].map(maping)
+# project_data = train_df["Sex"].map(maping)
 
 
 
@@ -449,6 +449,7 @@ scal_MM_X_test = scaler_model.transform(X_test)
 
 
 
+# df.loc[df['First Season'] > 1990, 'First Season'] = 1
 
 
 
