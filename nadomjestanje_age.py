@@ -87,31 +87,18 @@ def transform_data(input_df, set_for_train):
                             labels=[1,2,3,4,5])
 
 
-
     # if set_for_train == True:
     f = input_df.Fare
     for i in f:
         # uvjet = (i < 0)     # nema
         # uvjet = (i >600)    # nema
         uvjet = (i in [0,10,30,50,80,120,300,600])
-
         # if uvjet == True:
         #     print(i)
-
-
-
-    # print("\n", set_for_train)
-
 
     # Fare se dijeli osvisno o distribuciji na temelju procjene i razlike iz grafa (7 kategorija)
     # input_df["Fare"] = pd.cut(input_df["Fare"],bins=[0,10,30,50,80,120,300,600],
     #                          labels=[1,2,3,4,5,6,7])
-
-
-    # print(input_df.info())
-    # print("\n"*4)
-
-
 
 
     # Sex i Embarked se jednostavno preslikavaju
@@ -127,10 +114,11 @@ def transform_data(input_df, set_for_train):
 
     # Dijeljenje train i test seta
     if set_for_train == True:
-        input_df = input_df.dropna()                        # Izbacivanje nepotpunih podataka
+        input_df = input_df.dropna()                        # BEZ OVOG NE RADI
         # X_data = input_df.drop(columns=["Survived"])        # Za train set treba izbaciti "Survived" kategoriju
         X_data = input_df
         Y_data = input_df["Survived"]
+        # print(X_data.info())
 
     elif set_for_train == False:
         X_data = input_df                   # Za test set ne postoji "Survived" kategorija
@@ -153,11 +141,11 @@ X_test = train_filtered_data[0]
 
 
 
-
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn.metrics import accuracy_score
 
 y_godine = X_train["Age"]
+print(y_godine)
 x_ostalo = X_train.drop(columns=["Age"])
 
 x_1, x_2, y_1, y_2 = train_test_split(x_ostalo, y_godine, random_state=True, test_size=0.1)
@@ -174,9 +162,9 @@ def kNN_f(n_neighb):
 
 
 
-n_neigh_range = [i for i in range(1,21)]
-for i in n_neigh_range:
-    kNN_f(i)
+# n_neigh_range = [i for i in range(1,21)]
+# for i in n_neigh_range:
+#     kNN_f(i)
 
 # kNN_f(12)
 # df.loc[df['First Season'] > 1990, 'First Season'] = 1
@@ -194,11 +182,13 @@ knn_model = KNeighborsClassifier(n_neighbors=15)
 knn_model.fit(x_ostalo, y_godine)
 nan_df["Age"] = knn_model.predict(nan_df)
 
-train_final = pd.concat([nan_df, not_nan_df], ignore_index=False).sort_index()
+train_X_final = pd.concat([nan_df, not_nan_df], ignore_index=False).sort_index()
 
 
 
 
+
+# print(x_ostalo)
 
 
 

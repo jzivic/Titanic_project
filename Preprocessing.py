@@ -198,8 +198,8 @@ def transform_data(input_df, set_for_train):
         X_data = input_df.drop(columns=["Survived"])        # Za train set treba izbaciti "Survived" kategoriju
         Y_data = input_df["Survived"]
 
-        print(X_data)
-        print(Y_data)
+        # print(X_data)
+        # print(Y_data)
 
     elif set_for_train == False:
         X_data = input_df                   # Za test set ne postoji "Survived" kategorija
@@ -216,8 +216,7 @@ Y_train = train_filtered_data[1]
 train_filtered_data = transform_data(test_df, set_for_train=False)
 X_test = train_filtered_data[0]
 
-# print(len(Y_train))
-
+# print(X_train)
 
 
 
@@ -348,6 +347,7 @@ all_X_test_data = { "X": X_test,
 
 with open(input_data+'all_X_test_data.pickle', 'wb') as f_test:    # spremanje riječnika u dictdf
     pickle.dump(all_X_test_data, f_test)
+
 
 
 # Rječnik sa svim ukupnim train podacima
