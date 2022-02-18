@@ -130,8 +130,8 @@ def plot_accuracity(data_sets):
     plt.legend()
     fig.savefig(output_Log_Reg+"plot_LogReg.png", dpi=300)
 
-plot_accuracity(data_sets= ["X", "poly4_X"])
-# plot_accuracity(data_sets= ["X", "scal_std_X"])
+# plot_accuracity(data_sets= ["X", "poly3_X", "poly4_X"])
+plot_accuracity(data_sets= ["X", "scal_std_X", "scal_MM_X"])
 
 
 

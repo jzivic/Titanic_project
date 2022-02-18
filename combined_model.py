@@ -1,5 +1,8 @@
-from Preprocessing import input_data, output_data
+
 from Preprocessing import Y_train
+from Preprocessing import divided_train_data, all_X_test_data
+
+from Preprocessing import input_data, output_data
 
 import pickle, shutil, os, openpyxl
 import pandas as pd
@@ -49,7 +52,7 @@ pred_SVC = chosen_model_SVC(data_set="poly4_X")
 
 
 def chosen_model_kNN(data_set):
-    knn_model = KNeighborsClassifier(n_neighbors=17)
+    knn_model = KNeighborsClassifier(n_neighbors=10)
     knn_model.fit(divided_train_data["X_all_data"][data_set], divided_train_data["Y_all_data"][data_set])
     prediction = knn_model.predict(all_X_test_data[data_set])
     # print(prediction)
@@ -64,7 +67,7 @@ def chosen_model_decision_tree(data_set):
     prediction = decision_tree_model.predict(all_X_test_data[data_set])
     # print(prediction)
     return prediction
-pred_decision_tree = chosen_model_decision_tree(data_set="X")
+pred_decision_tree = chosen_model_decision_tree(data_set="poly4_X")
 
 
 def chosen_model_random_forest(data_set):
@@ -73,10 +76,11 @@ def chosen_model_random_forest(data_set):
     prediction = random_forest_model.predict(all_X_test_data[data_set])
     # print(prediction)
     return prediction
-pred_random_forest = chosen_model_random_forest(data_set="X")
+pred_random_forest = chosen_model_random_forest(data_set="poly4_X")
 
 
 # all_predictions = [pred_LogReg, pred_SVC, pred_kNN, pred_decision_tree, pred_random_forest]
+all_predictions = [pred_LogReg, pred_kNN, pred_decision_tree, pred_random_forest]
 # all_predictions = [pred_LogReg, pred_SVC, pred_kNN]
 
 all_predictions = [pred_LogReg]

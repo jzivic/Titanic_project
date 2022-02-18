@@ -169,6 +169,9 @@ Age i Fare treba transformirati u kategoričku varijablu  i odrediti raspone.
 PassangerId, Name i Ticket se izbacuju jer su slučajne varijabla i ne koreliraju s preživljavanjem.
 Cabin se izacuje jer za većinu putnika ne postoji podatak.
 Izbacuju se nepotpuni podaci jer cjelovitih podataka ima dovoljno za treniranje modela.
+Age ima dio nepotpunih podataka koji se nadopunjuje predviđanjima kNN algoritma.U Fare kategoriji nedostaju samo
+    2 podatka te će se dodati srednja vrijednost
+
 """
 
 
@@ -176,42 +179,6 @@ Izbacuju se nepotpuni podaci jer cjelovitih podataka ima dovoljno za treniranje 
 
 
 ###################################        2. Transformiranje podataka        #########################################
-
-
-# Transformacija kontinuiranih varijabli u kategoričke
-# def transform_data(input_df, set_for_train):
-#
-#     # Age se dijeli po osobnim, realnim kategorijama, (5 starosnih kategorija)
-#     input_df["Age"] = pd.cut(input_df["Age"],bins=[0,5,18,35,60,300],
-#                             labels=[1,2,3,4,5])
-#
-#     # Fare se dijeli osvisno o distribuciji na temelju procjene i razlike iz grafa (7 kategorija)
-#     input_df["Fare"] = pd.cut(input_df["Fare"],bins=[0,10,30,50,80,120,300,600],
-#                              labels=[1,2,3,4,5,6,7])
-#
-#     # Sex i Embarked se jednostavno preslikavaju
-#     input_df["Sex"] = input_df["Sex"].map({"male":0, "female":1})
-#     input_df["Embarked"] = input_df["Embarked"].map({"C":1, "Q":2, "S":3})
-#
-#     # Izbacivanje nepotrebnih podataka
-#     input_df = input_df.drop(columns=["PassengerId", "Name", "Ticket", "Cabin"])       # izbacivanje nepotrebnih kolona
-#
-#     # Dijeljenje train i test seta
-#     if set_for_train == True:
-#         input_df = input_df.dropna()                        # Izbacivanje nepotpunih podataka
-#         X_data = input_df.drop(columns=["Survived"])        # Za train set treba izbaciti "Survived" kategoriju
-#         Y_data = input_df["Survived"]
-#
-#         # print(X_data)
-#         # print(Y_data)
-#
-#     elif set_for_train == False:
-#         X_data = input_df                   # Za test set ne postoji "Survived" kategorija
-#         Y_data = None
-#
-#     return [X_data, Y_data]
-
-
 
 
 
@@ -232,6 +199,7 @@ def transform_data(input_df, set_for_train):
 
     input_df["Age"] = pd.cut(input_df["Age"],bins=[0,5,18,35,60,300],
                             labels=[1,2,3,4,5])
+
 
     # filtriranje nan podataka za Age kategoriju
     input_df["nan_Age"] = [math.isnan(i) for i in input_df["Age"]]
@@ -259,14 +227,13 @@ def transform_data(input_df, set_for_train):
     #     acc = kNN_f(n_n)
     # za train set se uzima 18 susjeda, provjereno
 
-
     # konačno nadopunjavanje godina
     knn_model = KNeighborsClassifier(n_neighbors=18)
     knn_model.fit(x_ostalo, y_godine)
     prediction_age = knn_model.predict(nan_df)
     nan_df["Age"] = prediction_age
 
-    filled_data = pd.concat([nan_df, not_nan_df], ignore_index=False).sort_index()
+    filled_data = pd.concat([nan_df, not_nan_df], ignore_index=False).sort_index()  # spajanje svih vrijednosti
 
     if set_for_train == True:
         X_data = filled_data.drop(columns=["Survived"])        # Za train set treba izbaciti "Survived" kategoriju
@@ -276,21 +243,7 @@ def transform_data(input_df, set_for_train):
         X_data = filled_data                   # Za test set ne postoji "Survived" kategorija
         Y_data = None
 
-
     return [X_data, Y_data]
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
@@ -302,9 +255,6 @@ Y_train = train_filtered_data[1]
 
 train_filtered_data = transform_data(test_df, set_for_train=False)
 X_test = train_filtered_data[0]
-
-# print(X_train)
-
 
 
 ###################################        3. Manipulacije podacima        #########################################
@@ -441,12 +391,12 @@ with open(input_data+'all_X_test_data.pickle', 'wb') as f_test:    # spremanje r
 all_X_train_data = {"X": X_train,
                     "scal_std_X": scal_std_X_train,
                     "scal_MM_X": scal_MM_X_train,
-                    "poly3_X": poly3_X_train,
+                    # "poly3_X": poly3_X_train,
                     "poly4_X": poly4_X_train,
-                    "pca_6_X": pca_6_X_train,
-                    "pca_5_X": pca_5_X_train,
-                    "pca_4_X": pca_4_X_train,
-                    "poly_scal_X": poly_scal_train
+                    # "pca_6_X": pca_6_X_train,
+                    # "pca_5_X": pca_5_X_train,
+                    # "pca_4_X": pca_4_X_train,
+                    # "poly_scal_X": poly_scal_train
                     }
 
 

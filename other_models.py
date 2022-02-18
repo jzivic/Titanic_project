@@ -71,5 +71,5 @@ for data_name in divided_train_data["X_train_data"]:
 
 
 """
-Najbolje je uzeti obične podatke i koristiti decision tree algoritam
+Najbolje je uzeti poly i koristiti decision tree algoritam
 """
