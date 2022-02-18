@@ -184,18 +184,25 @@ for i in n_neigh_range:
 
 train_df["nan"] = [math.isnan(i) for i in train_df["Age"]]
 nan_df = train_df[train_df["nan"]==True]
+not_nan_df = train_df[train_df["nan"]==False]
 
 nan_df = nan_df.drop(columns=["nan", "Age", "Cabin", "Ticket", "PassengerId", "Name"])
+not_nan_df = not_nan_df.drop(columns=["nan", "Cabin", "Ticket", "PassengerId", "Name"])
 
 
 knn_model = KNeighborsClassifier(n_neighbors=15)
 knn_model.fit(x_ostalo, y_godine)
-nan_df["Age"] =  knn_model.predict(nan_df)
+nan_df["Age"] = knn_model.predict(nan_df)
+
+train_final = pd.concat([nan_df, not_nan_df], ignore_index=False).sort_index()
 
 
 
 
-# a
+
+
+
+
 
 
 
