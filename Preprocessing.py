@@ -5,7 +5,7 @@ napraviti s nepotpunim podacima. Kako bi se dobili što bolji rezultati, podaci 
 dići u prostor viših značajki te provesti Principal Component Analysis (PCA) analizu.
 """
 
-import pickle, shutil, os
+import pickle, shutil, os, math
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
@@ -16,6 +16,10 @@ from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import MinMaxScaler, StandardScaler
 from sklearn import decomposition
 
+from sklearn.neighbors import KNeighborsClassifier
+from sklearn.metrics import accuracy_score
+
+
 project_data = "C:/Users/Josip/PycharmProjects/Titanic_project/project_data/"   # trebaju biti input i output folderi
 input_data, output_data = project_data+ "input/", project_data+ "output/"
 
@@ -25,7 +29,7 @@ if os.path.exists(output_data+"A_preprocessing/category_diagrams") == False:    
     os.mkdir(output_data+"A_preprocessing/category_diagrams/")
 
 
-always_same_data = True  # određuje hoće li se korisitit random dijeljenje podataka za train set, kraj skripte
+always_same_data = False  # određuje hoće li se korisitit random dijeljenje podataka za train set, kraj skripte
 
 # Učitavanje podataka u DataFrame
 train_df = pd.read_csv(input_data+'train.csv')
@@ -175,37 +179,120 @@ Izbacuju se nepotpuni podaci jer cjelovitih podataka ima dovoljno za treniranje 
 
 
 # Transformacija kontinuiranih varijabli u kategoričke
+# def transform_data(input_df, set_for_train):
+#
+#     # Age se dijeli po osobnim, realnim kategorijama, (5 starosnih kategorija)
+#     input_df["Age"] = pd.cut(input_df["Age"],bins=[0,5,18,35,60,300],
+#                             labels=[1,2,3,4,5])
+#
+#     # Fare se dijeli osvisno o distribuciji na temelju procjene i razlike iz grafa (7 kategorija)
+#     input_df["Fare"] = pd.cut(input_df["Fare"],bins=[0,10,30,50,80,120,300,600],
+#                              labels=[1,2,3,4,5,6,7])
+#
+#     # Sex i Embarked se jednostavno preslikavaju
+#     input_df["Sex"] = input_df["Sex"].map({"male":0, "female":1})
+#     input_df["Embarked"] = input_df["Embarked"].map({"C":1, "Q":2, "S":3})
+#
+#     # Izbacivanje nepotrebnih podataka
+#     input_df = input_df.drop(columns=["PassengerId", "Name", "Ticket", "Cabin"])       # izbacivanje nepotrebnih kolona
+#
+#     # Dijeljenje train i test seta
+#     if set_for_train == True:
+#         input_df = input_df.dropna()                        # Izbacivanje nepotpunih podataka
+#         X_data = input_df.drop(columns=["Survived"])        # Za train set treba izbaciti "Survived" kategoriju
+#         Y_data = input_df["Survived"]
+#
+#         # print(X_data)
+#         # print(Y_data)
+#
+#     elif set_for_train == False:
+#         X_data = input_df                   # Za test set ne postoji "Survived" kategorija
+#         Y_data = None
+#
+#     return [X_data, Y_data]
+
+
+
+
+
+
+
+# nova funkcija koja nadopunjuje Age podatke koji nedostaju
 def transform_data(input_df, set_for_train):
 
-    # Age se dijeli po osobnim, realnim kategorijama, (5 starosnih kategorija)
-    input_df["Age"] = pd.cut(input_df["Age"],bins=[0,5,18,35,60,300],
-                            labels=[1,2,3,4,5])
-
-    # Fare se dijeli osvisno o distribuciji na temelju procjene i razlike iz grafa (7 kategorija)
-    input_df["Fare"] = pd.cut(input_df["Fare"],bins=[0,10,30,50,80,120,300,600],
-                             labels=[1,2,3,4,5,6,7])
+    # Izbacivanje nepotrebnih podataka
+    input_df = input_df.drop(columns=["PassengerId", "Name", "Ticket", "Cabin"])       # izbacivanje nepotrebnih kolona
 
     # Sex i Embarked se jednostavno preslikavaju
     input_df["Sex"] = input_df["Sex"].map({"male":0, "female":1})
     input_df["Embarked"] = input_df["Embarked"].map({"C":1, "Q":2, "S":3})
 
-    # Izbacivanje nepotrebnih podataka
-    input_df = input_df.drop(columns=["PassengerId", "Name", "Ticket", "Cabin"])       # izbacivanje nepotrebnih kolona
+    input_df["Embarked"].fillna(input_df["Embarked"].mean(), inplace=True)
+    input_df["Fare"].fillna(input_df["Fare"].mean(), inplace=True)
 
-    # Dijeljenje train i test seta
+    input_df["Age"] = pd.cut(input_df["Age"],bins=[0,5,18,35,60,300],
+                            labels=[1,2,3,4,5])
+
+    # filtriranje nan podataka za Age kategoriju
+    input_df["nan_Age"] = [math.isnan(i) for i in input_df["Age"]]
+    nan_df = input_df[input_df["nan_Age"]==True]                        #DF za podatk gdje nema godina
+    not_nan_df = input_df[input_df["nan_Age"]==False]                   # gdje postoje godine
+
+    nan_df = nan_df.drop(columns=["nan_Age", "Age"])
+    not_nan_df = not_nan_df.drop(columns=["nan_Age"])   # o ovog se stvara model za predviđanje godina
+
+    y_godine = not_nan_df["Age"]
+    x_ostalo = not_nan_df.drop(columns=["Age"])
+    x_1, x_2, y_1, y_2 = train_test_split(x_ostalo, y_godine, random_state=True, test_size=0.1)
+
+
+    def kNN_f(n_neigh):
+        knn_model = KNeighborsClassifier(n_neighbors=n_neigh)
+        knn_model.fit(x_1, y_1)
+        acc_train = round(knn_model.score(x_1, y_1) * 100, 2)
+        prediction = knn_model.predict(x_2)
+        acc_valid = round(accuracy_score(prediction, y_2) *100,2)
+        print(acc_train, acc_valid)
+        return prediction
+
+    # for n_n in range(1,31):
+    #     acc = kNN_f(n_n)
+    # za train set se uzima 18 susjeda, provjereno
+
+
+    # konačno nadopunjavanje godina
+    knn_model = KNeighborsClassifier(n_neighbors=18)
+    knn_model.fit(x_ostalo, y_godine)
+    prediction_age = knn_model.predict(nan_df)
+    nan_df["Age"] = prediction_age
+
+    filled_data = pd.concat([nan_df, not_nan_df], ignore_index=False).sort_index()
+
     if set_for_train == True:
-        input_df = input_df.dropna()                        # Izbacivanje nepotpunih podataka
-        X_data = input_df.drop(columns=["Survived"])        # Za train set treba izbaciti "Survived" kategoriju
-        Y_data = input_df["Survived"]
-
-        # print(X_data)
-        # print(Y_data)
+        X_data = filled_data.drop(columns=["Survived"])        # Za train set treba izbaciti "Survived" kategoriju
+        Y_data = filled_data["Survived"]
 
     elif set_for_train == False:
-        X_data = input_df                   # Za test set ne postoji "Survived" kategorija
+        X_data = filled_data                   # Za test set ne postoji "Survived" kategorija
         Y_data = None
 
+
     return [X_data, Y_data]
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 # Transformirani podaci gdje su kontinuirane varijable prebačene u kategoriče
