@@ -20,7 +20,8 @@ project_data_win = "C:/Users/Josip/PycharmProjects/Titanic_project/project_data/
 project_data_linux = "//home/josip/PycharmProjects/Titanic_project/project_data/"
 
 
-project_data = project_data_linux
+project_data = project_data_win
+
 input_data, output_data = project_data+ "input/", project_data+ "output/"
 
 if os.path.exists(output_data+"A_preprocessing") == False:        # pravi folder ako ne postoji
@@ -39,8 +40,14 @@ all_df = train_df.append(test_df)
 ##################################        1. Statistika i opći pregled        #########################################
 
 # Pregled varijabli i eventualni nedostatak podataka:
+test_df.Fare.fillna(test_df.Fare.mean(), inplace=True)
+
 # print(train_df.info())
 # print(test_df.info())
+
+
+
+
 
 
 """
@@ -49,9 +56,7 @@ Kategoričke varijable: Survived, Sex, Embarked
 Ordinalne: Pclass
 Numeričke: Age, Fare
 Diskretne: SibSp, Parch
-
 Age i Cabin imaju nepotpune podatke u train i test setu: nadopunjavati ili izbaciti?
-
 Pretpostavke:
 Žene, djeca i putnici 1. klase imaju veću vjerojatnost preživljavanja
 """
@@ -81,9 +86,33 @@ def transform_data(input_df, set_for_train):
     input_df["Age"] = pd.cut(input_df["Age"],bins=[0,5,18,35,60,300],
                             labels=[1,2,3,4,5])
 
+
+
+    # if set_for_train == True:
+    f = input_df.Fare
+    for i in f:
+        # uvjet = (i < 0)     # nema
+        # uvjet = (i >600)    # nema
+        uvjet = (i in [0,10,30,50,80,120,300,600])
+
+        # if uvjet == True:
+        #     print(i)
+
+
+
+    # print("\n", set_for_train)
+
+
     # Fare se dijeli osvisno o distribuciji na temelju procjene i razlike iz grafa (7 kategorija)
-    input_df["Fare"] = pd.cut(input_df["Fare"],bins=[0,10,30,50,80,120,300,600],
-                             labels=[1,2,3,4,5,6,7])
+    # input_df["Fare"] = pd.cut(input_df["Fare"],bins=[0,10,30,50,80,120,300,600],
+    #                          labels=[1,2,3,4,5,6,7])
+
+
+    # print(input_df.info())
+    # print("\n"*4)
+
+
+
 
     # Sex i Embarked se jednostavno preslikavaju
     input_df["Sex"] = input_df["Sex"].map({"male":0, "female":1})
@@ -91,6 +120,10 @@ def transform_data(input_df, set_for_train):
 
     # Izbacivanje nepotrebnih podataka
     input_df = input_df.drop(columns=["PassengerId", "Name", "Ticket", "Cabin"])       # izbacivanje nepotrebnih kolona
+
+
+
+
 
     # Dijeljenje train i test seta
     if set_for_train == True:
@@ -114,8 +147,7 @@ Y_train = train_filtered_data[1]
 train_filtered_data = transform_data(test_df, set_for_train=False)
 X_test = train_filtered_data[0]
 
-# print(len(Y_train))
-
+# X_test.Fare.fillna(X_test.Fare.mean(), inplace=True)
 
 
 
@@ -128,14 +160,6 @@ from sklearn.metrics import accuracy_score
 y_godine = X_train["Age"]
 x_ostalo = X_train.drop(columns=["Age"])
 
-
-
-
-
-
-
-
-
 x_1, x_2, y_1, y_2 = train_test_split(x_ostalo, y_godine, random_state=True, test_size=0.1)
 def kNN_f(n_neighb):
     knn_model = KNeighborsClassifier(n_neighbors=n_neighb)
@@ -143,7 +167,7 @@ def kNN_f(n_neighb):
     acc_train = round(knn_model.score(x_1, y_1) * 100, 2)
     prediction = knn_model.predict(x_2)
     acc_valid = round(accuracy_score(prediction, y_2) * 100, 2)
-    print(acc_valid)
+    # print(n_neighb, acc_valid)
     # print(prediction)
     return prediction
 
@@ -151,35 +175,27 @@ def kNN_f(n_neighb):
 
 
 n_neigh_range = [i for i in range(1,21)]
-# for i in n_neigh_range:
-#     kNN_f(i)
+for i in n_neigh_range:
+    kNN_f(i)
 
 # kNN_f(12)
 # df.loc[df['First Season'] > 1990, 'First Season'] = 1
 
 
 train_df["nan"] = [math.isnan(i) for i in train_df["Age"]]
-nan_df = train_df[train_df["nan"] == True]
+nan_df = train_df[train_df["nan"]==True]
 
 nan_df = nan_df.drop(columns=["nan", "Age", "Cabin", "Ticket", "PassengerId", "Name"])
 
 
-
-knn_model = KNeighborsClassifier(n_neighbors=12)
+knn_model = KNeighborsClassifier(n_neighbors=15)
 knn_model.fit(x_ostalo, y_godine)
-prediction = knn_model.predict(nan_df)
-
-# print(x_1)
-# print(nan_df)
-
-# for i,j in zip(x_1, nan_df):
-#     print(i,j)
+nan_df["Age"] =  knn_model.predict(nan_df)
 
 
 
 
-# b = train_df[math.isnan(train_df["Age"]) == True]
-# print(b)
+
 
 
 
