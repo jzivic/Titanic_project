@@ -31,8 +31,6 @@ def gaussian_NB_f(X_train, Y_train, X_valid, Y_valid):
     return [acc_train, acc_valid]
 
 
-
-
 def random_forest_f(X_train, Y_train, X_valid, Y_valid):
     random_forest_model = RandomForestClassifier(n_estimators=100)
     random_forest_model.fit(X_train, Y_train)
@@ -68,8 +66,3 @@ for data_name in divided_train_data["X_train_data"]:
           # gaussian_NB_f(X_train, Y_train, X_valid, Y_valid)
           )
 
-
-
-"""
-Najbolje je uzeti poly i koristiti decision tree algoritam
-"""

@@ -52,8 +52,8 @@ def grid_search(data_name, X_train, Y_train, X_valid, Y_valid):
     # Postavljanje hiperparametara i excel datoteke za spremanje pretraživanja
     xlsx_name = output_SVM+"Acc_SVM_"+data_name+".xlsx"                    # ime excel file u koji se spremaju rezultati, kasnije
     Acc_grid_search = pd.ExcelWriter(xlsx_name)             # stvaranje excela
-    C_range = range(-10, 1)                                 # rang baze za C
-    gamma_range = range(-20, 1)
+    C_range = range(-10, -1)                                 # rang baze za C
+    gamma_range = range(-20, -1)
     C_f = lambda m: 2 ** m                                  # Funkcije za računanje C i gamma
     gamma_f = lambda n: 2 ** n
     best_grid_acc = {"radial_base":[], "poly":[], "linear":[]}
@@ -102,7 +102,7 @@ def grid_search(data_name, X_train, Y_train, X_valid, Y_valid):
 
 
     def poly_function():
-        C_range_poly = range(-10, 3)
+        C_range_poly = range(-10, 0)
         gamma_range_poly = range(-10, -1)
         # gamma_range_poly = range(-10, -9)       # pomoćne vrijednosti za isprobavanje
         # C_range_poly = range(-10, -9)

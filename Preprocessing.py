@@ -1,8 +1,8 @@
 """
 Prvi dio projekta: učitavaju se podaci, pravi njihov pregled i provjerava nedostaju li podaci u
 pojedinim kategorijama. Nakon toga analiziraju se vrste varijabli i raspodjele podataka te se određuje što će se
-napraviti s nepotpunim podacima. Kako bi se dobili što bolji rezultati, podaci će se skalirati na 2 načina,
-dići u prostor viših značajki te provesti Principal Component Analysis (PCA) analizu.
+napraviti s nepotpunim podacima. Kako bi se dobili što bolji rezultati, podaci će se skalirati, dići u prostor
+ viših značajki te provesti Principal Component Analysis (PCA) analizu.
 """
 
 import pickle, shutil, os, math
@@ -20,21 +20,22 @@ from sklearn.neighbors import KNeighborsClassifier
 from sklearn.metrics import accuracy_score
 
 
-project_data = "C:/Users/Josip/PycharmProjects/Titanic_project/project_data/"   # trebaju biti input i output folderi
+# ovako trebaju biti postavljeni folderi ua automatsko spremanje input/optput podataka
+project_data = "C:/Users/Josip/PycharmProjects/Titanic_project/project_data/"
 input_data, output_data = project_data+ "input/", project_data+ "output/"
 
-if os.path.exists(output_data+"A_preprocessing") == False:        # pravi folder ako ne postoji
+if os.path.exists(output_data+"A_preprocessing") == False:        # kreira folder ako ne postoji
     os.mkdir(output_data+"A_preprocessing")
-if os.path.exists(output_data+"A_preprocessing/category_diagrams") == False:        # pravi folder ako ne postoji
+if os.path.exists(output_data+"A_preprocessing/category_diagrams") == False:        # kreira folder ako ne postoji
     os.mkdir(output_data+"A_preprocessing/category_diagrams/")
 
 
-always_same_data = False  # određuje hoće li se korisitit random dijeljenje podataka za train set, kraj skripte
+always_same_data = False  # određuje hoće li se korisitit random opcija za dijeljenje podataka train seta,
+# ili će biti uvijek isti podaci. Dijeljenje se nalazi na kraju skripte
 
 # Učitavanje podataka u DataFrame
 train_df = pd.read_csv(input_data+'train.csv')
 test_df = pd.read_csv(input_data+'test.csv')
-all_df = train_df.append(test_df)
 
 ##################################        1. Statistika i opći pregled        #########################################
 
@@ -168,15 +169,9 @@ Age i Fare treba transformirati u kategoričku varijablu  i odrediti raspone.
 
 PassangerId, Name i Ticket se izbacuju jer su slučajne varijabla i ne koreliraju s preživljavanjem.
 Cabin se izacuje jer za većinu putnika ne postoji podatak.
-Izbacuju se nepotpuni podaci jer cjelovitih podataka ima dovoljno za treniranje modela.
-Age ima dio nepotpunih podataka koji se nadopunjuje predviđanjima kNN algoritma.U Fare kategoriji nedostaju samo
-    2 podatka te će se dodati srednja vrijednost
-
+Age je bitan prediktor te se nadopunjuje train i test set. kNN algoritmom. U Fare kategoriji nedostaju samo
+    2 podatka te će se dodati srednja vrijednost kategorije.
 """
-
-
-
-
 
 ###################################        2. Transformiranje podataka        #########################################
 
@@ -191,27 +186,28 @@ def transform_data(input_df, set_for_train):
     input_df = input_df.drop(columns=["PassengerId", "Name", "Ticket", "Cabin"])       # izbacivanje nepotrebnih kolona
 
     # Sex i Embarked se jednostavno preslikavaju
-    input_df["Sex"] = input_df["Sex"].map({"male":0, "female":1})
+    input_df["Sex"] = input_df["Sex"].map({"male":0, "female":1})        # mapiranje zbog nemogućnosti rada sa stringom
     input_df["Embarked"] = input_df["Embarked"].map({"C":1, "Q":2, "S":3})
 
+    # nadopunjavanje podataka koji fale sa srednjom vrijenosti kategorije
     input_df["Embarked"].fillna(input_df["Embarked"].mean(), inplace=True)
     input_df["Fare"].fillna(input_df["Fare"].mean(), inplace=True)
 
-    input_df["Age"] = pd.cut(input_df["Age"],bins=[0,5,18,35,60,300],
+    input_df["Age"] = pd.cut(input_df["Age"],bins=[0,5,18,35,60,300],    # dijeljenje Aege kategorije u realne okvire
                             labels=[1,2,3,4,5])
 
 
-    # filtriranje nan podataka za Age kategoriju
-    input_df["nan_Age"] = [math.isnan(i) for i in input_df["Age"]]
-    nan_df = input_df[input_df["nan_Age"]==True]                        #DF za podatk gdje nema godina
-    not_nan_df = input_df[input_df["nan_Age"]==False]                   # gdje postoje godine
+    # filtriranje nan podataka u Age kategoriji
+    input_df["nan_Age"] = [math.isnan(i) for i in input_df["Age"]]      # nova kolona u input_df, bool postoji li Age
+    nan_df = input_df[input_df["nan_Age"]==True]                        # novi DF za podatke gdje nema podataka za Age
+    not_nan_df = input_df[input_df["nan_Age"]==False]                   # gdje postoji Age
 
     nan_df = nan_df.drop(columns=["nan_Age", "Age"])
-    not_nan_df = not_nan_df.drop(columns=["nan_Age"])   # o ovog se stvara model za predviđanje godina
+    not_nan_df = not_nan_df.drop(columns=["nan_Age"])   
 
-    y_godine = not_nan_df["Age"]
-    x_ostalo = not_nan_df.drop(columns=["Age"])
-    x_1, x_2, y_1, y_2 = train_test_split(x_ostalo, y_godine, random_state=True, test_size=0.1)
+    y_Age = not_nan_df["Age"]
+    x_without_Age = not_nan_df.drop(columns=["Age"])
+    x_1, x_2, y_1, y_2 = train_test_split(x_without_Age, y_Age, random_state=True, test_size=0.1)
 
 
     def kNN_f(n_neigh):
@@ -223,15 +219,17 @@ def transform_data(input_df, set_for_train):
         print(acc_train, acc_valid)
         return prediction
 
-    # for n_n in range(1,31):
+    # ispisivanje točnosti train i validation seta za određen broj susjeda
+    # for n_n in range(1,36):
     #     acc = kNN_f(n_n)
-    # za train set se uzima 18 susjeda, provjereno
+
+    # uzima se 18 ili 30 susjeda, 18 bolje odgovara train a 30 test setu
 
     # konačno nadopunjavanje godina
     knn_model = KNeighborsClassifier(n_neighbors=18)
-    knn_model.fit(x_ostalo, y_godine)
+    knn_model.fit(x_without_Age, y_Age)
     prediction_age = knn_model.predict(nan_df)
-    nan_df["Age"] = prediction_age
+    nan_df["Age"] = prediction_age                  # nadopunjavanje godina
 
     filled_data = pd.concat([nan_df, not_nan_df], ignore_index=False).sort_index()  # spajanje svih vrijednosti
 
@@ -248,7 +246,7 @@ def transform_data(input_df, set_for_train):
 
 
 
-# Transformirani podaci gdje su kontinuirane varijable prebačene u kategoriče
+# Transformirani podaci gdje su kontinuirane varijable prebačene u kategoričke
 train_filtered_data = transform_data(train_df, set_for_train=True)
 X_train = train_filtered_data[0]
 Y_train = train_filtered_data[1]
@@ -295,7 +293,7 @@ scal_MM_X_train = scal_data[0]
 scal_MM_X_test = scal_data[1]
 
 
-# B: dizanje matrice dizajna u prostor više dimenzije (kombinacija pstojećih kategorija)
+# B: dizanje matrice dizajna u prostor više dimenzije (kombinacija postojećih kategorija)
 def polynomial_features_scaling(deg):
     p_X_train = sklearn.preprocessing.PolynomialFeatures(degree=deg).fit_transform(X_train)
     p_X_test = sklearn.preprocessing.PolynomialFeatures(degree=deg).fit_transform(X_test)
@@ -323,7 +321,7 @@ def PCA_f(n_components):
     pca_X_train = pca.fit_transform(scal_std_X_train)
     pca_X_test = pca.fit_transform(scal_std_X_test)
 
-    # Singular value decomposition
+    # Singular Value Decomposition
     U, sigma, V = np.linalg.svd(pca_X_train)  # lijeva ort. matrica , matrica vlastitih vrijednosti, desna ort. matrica
     sum_current_sigma = sum([sigma[i] for i in range(n_components)])
     sum_whole_sigma = sum(np.linalg.svd(decomposition.PCA(n_components=7).fit_transform(scal_std_X_train))[1])
@@ -392,7 +390,7 @@ all_X_train_data = {"X": X_train,
                     "scal_std_X": scal_std_X_train,
                     "scal_MM_X": scal_MM_X_train,
                     # "poly3_X": poly3_X_train,
-                    "poly4_X": poly4_X_train,
+                    # "poly4_X": poly4_X_train,
                     # "pca_6_X": pca_6_X_train,
                     # "pca_5_X": pca_5_X_train,
                     # "pca_4_X": pca_4_X_train,
@@ -414,12 +412,12 @@ for data in all_X_train_data:
     X_valid_data[data] = X_valid
     X_all_data[data] = all_X_train_data[data]
 
-    Y_train_data[data] = y_train    # y je ovdje, Y je sve skupa gore
+    Y_train_data[data] = y_train
     Y_valid_data[data] = y_valid
     Y_all_data[data] = Y_train
 
 
-# Ukupni podijeljenji podaci
+# Ukupni podijeljenji podaci na train i validation set
 divided_train_data = {
                     "X_train_data": X_train_data,
                     "X_valid_data": X_valid_data,
@@ -467,21 +465,6 @@ print()
 
 # varijablino ime se ispisuje
 # data_name = f'{variable=}'.split('=')[0]
-
-
-
-"""
-Podaci se mogu i kraće ovako transformirati ali mijenja se zapis u array umjesto DF. Koristiti način u funkciji gore
-# Podaci sa standardiziranom transformacijom
-scaler_model = StandardScaler()
-scal_std_X_train = scaler_model.fit_transform(X_train)
-scal_std_X_test = scaler_model.transform(X_test)
-# Podaci s MinMax transformacijom
-scaler_model = MinMaxScaler()
-scal_MM_X_train = scaler_model.fit_transform(X_train)
-scal_MM_X_test = scaler_model.transform(X_test)
-"""
-
 
 
 

@@ -27,7 +27,7 @@ except:
 os.mkdir(final_prediction)
 
 
-
+# Funkcije za svaki algoritam, odabire se algoritam, korišteni podaci i hiperparametri
 def chosen_model_LogReg(data_set):
     # logreg_model = LogisticRegression(C=10e-5, max_iter=1e7)        # Broj iteracija povećan zbog poly podataka
     logreg_model = LogisticRegression(C=10**2)        # Broj iteracija povećan zbog poly podataka
@@ -47,12 +47,12 @@ def chosen_model_SVC(data_set):
     # print(prediction)
     return prediction
 
-pred_SVC = chosen_model_SVC(data_set="poly4_X")
+# pred_SVC = chosen_model_SVC(data_set="poly4_X")
 
 
 
 def chosen_model_kNN(data_set):
-    knn_model = KNeighborsClassifier(n_neighbors=10)
+    knn_model = KNeighborsClassifier(n_neighbors=5)
     knn_model.fit(divided_train_data["X_all_data"][data_set], divided_train_data["Y_all_data"][data_set])
     prediction = knn_model.predict(all_X_test_data[data_set])
     # print(prediction)
@@ -67,7 +67,7 @@ def chosen_model_decision_tree(data_set):
     prediction = decision_tree_model.predict(all_X_test_data[data_set])
     # print(prediction)
     return prediction
-pred_decision_tree = chosen_model_decision_tree(data_set="poly4_X")
+pred_decision_tree = chosen_model_decision_tree(data_set="X")
 
 
 def chosen_model_random_forest(data_set):
@@ -76,24 +76,22 @@ def chosen_model_random_forest(data_set):
     prediction = random_forest_model.predict(all_X_test_data[data_set])
     # print(prediction)
     return prediction
-pred_random_forest = chosen_model_random_forest(data_set="poly4_X")
+# pred_random_forest = chosen_model_random_forest(data_set="poly4_X")
 
 
+# Lista rješenja za sve korištene algoritme
 # all_predictions = [pred_LogReg, pred_SVC, pred_kNN, pred_decision_tree, pred_random_forest]
-all_predictions = [pred_LogReg, pred_kNN, pred_decision_tree, pred_random_forest]
-# all_predictions = [pred_LogReg, pred_SVC, pred_kNN]
+# all_predictions = [pred_LogReg, pred_kNN, pred_decision_tree, pred_random_forest]
+all_predictions = [pred_LogReg, pred_kNN, pred_decision_tree]
 
-all_predictions = [pred_LogReg]
 
-combined_predictions = list(zip(*all_predictions))
-prediction = [round(sum(i)/len(i)) for i in combined_predictions]
+combined_predictions = list(zip(*all_predictions))  # grupiranje predviđanja za svaki primjer
+prediction = [round(sum(i)/len(i)) for i in combined_predictions]   # prosjek predviđanja
 passangerId = list(range(892,1310))
 
 
-
-survived_df = pd.DataFrame({"Survived":prediction}, index=passangerId)
-survived_df.to_csv(final_prediction + "rjesenje_final2.csv")
-survived_df.to_excel(final_prediction + "rjesenje_final.xlsx")
+survived_df = pd.DataFrame({"Survived":prediction}, index=passangerId)  # DF
+survived_df.to_csv(final_prediction + "final_prediction.csv")    # spremanje podataka u csv
 
 
 

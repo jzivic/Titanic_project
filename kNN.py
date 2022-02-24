@@ -129,21 +129,14 @@ plot_accuracity(data_sets= [data for data in divided_train_data["X_train_data"]]
 
 """
 Zaključak:
-    -D_kNN model je dosta osjetljiv na promjene podataka unutar split metode!
-   
+ 
     -Na primjeru neskaliranih podataka kao i većine ostalih zaključuje se da najbolju točnost za train set imaju modeli
-     u kojima se uzima samo 1 najbliži susjed (osim podataka s Min Max skaliranjem)
+     u kojima se uzima samo 1 najbliži susjed (osim podataka s Min Max skaliranjem) - PRETRENIRANOST!!
     
-    -Najveću točnost train seta očekivano ima model s podacima dizanima u viši prostor značajki: preko 85%. 
-
-    -Zanimljivo je da se na nekim primjerima mijenja kontinuirano / proporcionalno s brojem susjeda (preskače)
+    - Skalirani podaci (std i MM) imaju značajnije bolju točnost od ostalih odataka - dobro za kNN algoritam!!
+    - MM ima veću stabilnost od std skaliranja -> manje oscilacije ovisno o broju susjeda
     
-    - Broj parametara će se uzeti 20-25 na temelju pregleda validacijskog seta jer se pokazao kao najstabilniji
-    
-    -Najbolju točnost imaju MM podaci za 15-20 broj susjeda
-    
-    
-    - skalirani podaci imaju bolju točnost od običnih podataka, cca 10 susjeda
+    -Najbolju točnost imaju MM podaci za 5 susjeda i ta će se točnost uzeti
     
 """
 

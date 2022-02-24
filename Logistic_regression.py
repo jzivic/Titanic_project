@@ -5,6 +5,8 @@ najbolju točnost modela. Paralelno s time potrebno je za svake podatke naći na
 hiperparametar C=1/lambda.
 C - koeficijent dopuštene pogreške klasifikacije - obrnuto proporcionalni jačini regularizacije lambda
 Potrebno je ispitati kombinacije različith C i setova podataka
+Za navedene nepoznanice će se nacrtati grafovi i podaci će se zapisati u excel.
+
 """
 
 from Preprocessing import input_data, output_data
@@ -71,7 +73,7 @@ for data_name in divided_train_data["X_train_data"]:
             n_C = C_range.index(C)
             max_acc = accurities[1]
             best_grid_acc[data_name] = [n_C]
-        elif accurities[1] == max_acc:                # ako točnost već postoji, za nju se dodaju pripadajući hiperparametar C
+        elif accurities[1] == max_acc:      # ako ista točnost već postoji, za nju se dodaju pripadajući hiperpar C
             n_C = C_range.index(C)
             best_grid_acc[data_name].append(n_C)
 
@@ -90,7 +92,7 @@ def to_excel():
     workbook = openpyxl.load_workbook(xlsx_file)
     workbook.get_sheet_by_name("Accuracity").cell(row=1, column=1).value = "C"
     workbook.get_sheet_by_name("Accuracity").cell(row=1, column=1).fill = \
-        openpyxl.styles.PatternFill("solid", fgColor="00FFFF00")  # bojanje oznaka gamma, C
+        openpyxl.styles.PatternFill("solid", fgColor="00FFFF00")  # bojanje oznaka C
 
     # Bojanje ćelija u excelu tamo gdje je najveća točnost modela za pojedine podatke
     for data_name in accuracy_DF:
@@ -130,8 +132,8 @@ def plot_accuracity(data_sets):
     plt.legend()
     fig.savefig(output_Log_Reg+"plot_LogReg.png", dpi=300)
 
-# plot_accuracity(data_sets= ["X", "poly3_X", "poly4_X"])
-plot_accuracity(data_sets= ["X", "scal_std_X", "scal_MM_X"])
+# plot_accuracity(data_sets= ["X", "scal_std_X", "scal_MM_X"])
+plot_accuracity(data_sets= ["X"])
 
 
 
@@ -155,9 +157,7 @@ def Log_Reg_coeffs():
     coeff_df = coeff_df.reset_index(drop=True)
     print(coeff_df)
 
-# Log_Reg_coeffs()
-
-
+Log_Reg_coeffs()
 
 
 
@@ -167,13 +167,11 @@ Zaključci:
     - Nakon ispitivanja zaključak je da su za različite podatke različiti hiperparametri C najbolji izbor,
         ovisno o podacima.
 
-    - Točnost modela dosta ovisi o odabiru random_state-project_data i podacima koji se uzimaju za train i validation set!
+    - Točnost modela dosta ovisi o odabiru random_state-project_data i podacima koji se uzimaju za train i
+        validation set!
 
     - Najbolju točnost train seta pokazuju podaci koji su preslikani u višu dimenziju i to za 4 razine: točnost 88.23%
         -> logično jer je model s više parametara najlakše postaje prenaučen. 
-
-    - Dobivaju se značajne razlike u točnosti za različite podatke od seta do seta podataka. 
-        Može li se to kako popraviti?
 
     - Treba imati na umu da su ovdje svi podaci prebačeni u kategoričke varijable
             
