@@ -20,5 +20,5 @@ Case je podijeljen u 3 dijela:
    - Napravljena važnost značaki za predikciju.
     
 3. Konačni odabir modela
-  - Odabrani su optimalni modeli s pripadajućim hiperparametrima te se napravio njihov prosjek predikcija.
-  - Zapis predikcija u csv file   
+   - Odabrani su optimalni modeli s pripadajućim hiperparametrima te se napravio njihov prosjek predikcija.
+   - Zapis predikcija u csv file   
