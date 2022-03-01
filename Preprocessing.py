@@ -20,8 +20,9 @@ from sklearn.neighbors import KNeighborsClassifier
 from sklearn.metrics import accuracy_score
 
 
-# ovako trebaju biti postavljeni folderi ua automatsko spremanje input/optput podataka
+# ovako trebaju biti postavljeni folderi za automatsko spremanje input i output podataka
 project_data = "C:/Users/Josip/PycharmProjects/Titanic_project/project_data/"
+
 input_data, output_data = project_data+ "input/", project_data+ "output/"
 
 if os.path.exists(output_data+"A_preprocessing") == False:        # kreira folder ako ne postoji
@@ -30,8 +31,8 @@ if os.path.exists(output_data+"A_preprocessing/category_diagrams") == False:    
     os.mkdir(output_data+"A_preprocessing/category_diagrams/")
 
 
-always_same_data = False  # određuje hoće li se korisitit random opcija za dijeljenje podataka train seta,
-# ili će biti uvijek isti podaci. Dijeljenje se nalazi na kraju skripte
+always_same_data = False  # određuje hoće li se korisitit random opcija za dijeljenje podataka train seta
+# ili će biti uvijek isti podaci. Dijeljenje seta se nalazi na dnu skripte
 
 # Učitavanje podataka u DataFrame
 train_df = pd.read_csv(input_data+'train.csv')
@@ -121,7 +122,7 @@ def survived_in_category(category):
                     "/Survived and died ratio in "+ category+".png", dpi=300)
         plt.clf()
 
-    try:
+    try:        # koristi se jer se ordinalne varijable ne mogu plotati
         overall_number()
         survival_percentage()
         survived_vs_died()
@@ -169,8 +170,8 @@ Age i Fare treba transformirati u kategoričku varijablu  i odrediti raspone.
 
 PassangerId, Name i Ticket se izbacuju jer su slučajne varijabla i ne koreliraju s preživljavanjem.
 Cabin se izacuje jer za većinu putnika ne postoji podatak.
-Age je bitan prediktor te se nadopunjuje train i test set. kNN algoritmom. U Fare kategoriji nedostaju samo
-    2 podatka te će se dodati srednja vrijednost kategorije.
+Age je bitan prediktor te se nadopunjuje za train i test set kNN algoritmom. U Fare kategoriji nedostaju samo
+    2 podatka te će se nadopuniti srednjom vrijednosti kategorije.
 """
 
 ###################################        2. Transformiranje podataka        #########################################
@@ -179,9 +180,8 @@ Age je bitan prediktor te se nadopunjuje train i test set. kNN algoritmom. U Far
 
 
 
-# nova funkcija koja nadopunjuje Age podatke koji nedostaju
+# Funkcija koja nadopunjuje Age podatke koji nedostaju
 def transform_data(input_df, set_for_train):
-
     # Izbacivanje nepotrebnih podataka
     input_df = input_df.drop(columns=["PassengerId", "Name", "Ticket", "Cabin"])       # izbacivanje nepotrebnih kolona
 
@@ -189,20 +189,19 @@ def transform_data(input_df, set_for_train):
     input_df["Sex"] = input_df["Sex"].map({"male":0, "female":1})        # mapiranje zbog nemogućnosti rada sa stringom
     input_df["Embarked"] = input_df["Embarked"].map({"C":1, "Q":2, "S":3})
 
-    # nadopunjavanje podataka koji fale sa srednjom vrijenosti kategorije
+    # nadopunjavanje podataka koji fale srednjom vrijenosti kategorije
     input_df["Embarked"].fillna(input_df["Embarked"].mean(), inplace=True)
     input_df["Fare"].fillna(input_df["Fare"].mean(), inplace=True)
 
     input_df["Age"] = pd.cut(input_df["Age"],bins=[0,5,18,35,60,300],    # dijeljenje Aege kategorije u realne okvire
                             labels=[1,2,3,4,5])
 
-
     # filtriranje nan podataka u Age kategoriji
     input_df["nan_Age"] = [math.isnan(i) for i in input_df["Age"]]      # nova kolona u input_df, bool postoji li Age
     nan_df = input_df[input_df["nan_Age"]==True]                        # novi DF za podatke gdje nema podataka za Age
     not_nan_df = input_df[input_df["nan_Age"]==False]                   # gdje postoji Age
 
-    nan_df = nan_df.drop(columns=["nan_Age", "Age"])
+    nan_df = nan_df.drop(columns=["nan_Age", "Age"])                    # postaje nepotrebno i briše se
     not_nan_df = not_nan_df.drop(columns=["nan_Age"])   
 
     y_Age = not_nan_df["Age"]
@@ -222,7 +221,6 @@ def transform_data(input_df, set_for_train):
     # ispisivanje točnosti train i validation seta za određen broj susjeda
     # for n_n in range(1,36):
     #     acc = kNN_f(n_n)
-
     # uzima se 18 ili 30 susjeda, 18 bolje odgovara train a 30 test setu
 
     # konačno nadopunjavanje godina
@@ -316,7 +314,7 @@ poly4_X_test = poly4_data[1]
 # C: Principal component analysis: redukcije značajki i utjecaj na vrijeme/točnost modela
 # Provjera točnosti podataka nakon redukcije: bitno je koristiti već skalirane podatke
 def PCA_f(n_components):
-    assert n_components <= len(X_train.columns), "Broj komponenata je prevelik!"  # max komponenata koliko može ostati
+    assert n_components <= len(X_train.columns), "Broj komponenata je prevelik!"  # max komponenata koje mogu ostati
     pca = decomposition.PCA(n_components=n_components)
     pca_X_train = pca.fit_transform(scal_std_X_train)
     pca_X_test = pca.fit_transform(scal_std_X_test)
@@ -342,31 +340,6 @@ pca_4_X_train = pca_4_X[0] # Podaci reducirani za jednu značajku
 pca_4_X_test = pca_4_X[1]
 
 
-
-
-# Dodatna provjera: Ima li smisla skalirati podatke nakon dizanja u viši prostor značajki - NEMA
-def poly_and_scaling():
-    poly4_data = polynomial_features_scaling(deg=4)
-    poly4_X_train = poly4_data[0]
-    poly4_X_test = poly4_data[1]
-
-    scal_data_test = pd.DataFrame()
-    categories = [categ for categ in poly4_X_train]
-    scal_data_train = pd.DataFrame()
-    scaler_model = StandardScaler()
-
-    scal_data_train[categories] = scaler_model.fit_transform(poly4_X_train[categories])
-    scal_data_test[categories] = scaler_model.transform(poly4_X_test[categories])
-
-    train_data = scal_data[0]
-    test_data = scal_data[1]
-    return[train_data, test_data]
-
-poly_and_scaling_data = poly_and_scaling()
-poly_scal_train = poly_and_scaling_data[0]
-poly_scal_test = poly_and_scaling_data[1]
-
-
 # Rječnik sa svim test podacima za predviđanje
 all_X_test_data = { "X": X_test,
                     "scal_std_X": scal_std_X_test,
@@ -376,7 +349,6 @@ all_X_test_data = { "X": X_test,
                     "pca_6_X": pca_6_X_test,
                     "pca_5_X": pca_5_X_test,
                     "pca_4_X": pca_4_X_test,
-                    "poly_scal_X": poly_scal_test,
                    }
 
 
@@ -386,15 +358,15 @@ with open(input_data+'all_X_test_data.pickle', 'wb') as f_test:    # spremanje r
 
 
 # Rječnik sa svim ukupnim train podacima
-all_X_train_data = {"X": X_train,
+all_X_train_data = {
+                    "X": X_train,
                     "scal_std_X": scal_std_X_train,
                     "scal_MM_X": scal_MM_X_train,
                     # "poly3_X": poly3_X_train,
                     # "poly4_X": poly4_X_train,
-                    # "pca_6_X": pca_6_X_train,
-                    # "pca_5_X": pca_5_X_train,
-                    # "pca_4_X": pca_4_X_train,
-                    # "poly_scal_X": poly_scal_train
+                    "pca_6_X": pca_6_X_train,
+                    "pca_5_X": pca_5_X_train,
+                    "pca_4_X": pca_4_X_train,
                     }
 
 

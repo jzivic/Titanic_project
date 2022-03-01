@@ -1,6 +1,5 @@
-
 """
-Treba otkriti koji podaci najbolje odgovaraju klasifikfatoru
+Treba otkriti koji podaci najbolje odgovaraju svakom klasifikfatoru
 """
 
 from Preprocessing import input_data, output_data
@@ -20,7 +19,7 @@ with open(input_data+'/divided_train_data.pickle', 'rb') as f_X_train:
 with open(input_data+'/all_X_test_data.pickle', 'rb') as f_test:
     all_X_test_data = pickle.load(f_test)
 
-
+# Gaussian Naiva Bayes
 def gaussian_NB_f(X_train, Y_train, X_valid, Y_valid):
     gaussian_model = GaussianNB()
     gaussian_model.fit(X_train, Y_train)
@@ -30,7 +29,7 @@ def gaussian_NB_f(X_train, Y_train, X_valid, Y_valid):
 
     return [acc_train, acc_valid]
 
-
+# Random forest
 def random_forest_f(X_train, Y_train, X_valid, Y_valid):
     random_forest_model = RandomForestClassifier(n_estimators=100)
     random_forest_model.fit(X_train, Y_train)
@@ -39,7 +38,7 @@ def random_forest_f(X_train, Y_train, X_valid, Y_valid):
     acc_valid = round(accuracy_score(prediction, Y_valid) * 100, 2)
     return [acc_train, acc_valid]
 
-
+# Decision tree
 def decision_tree_f(X_train, Y_train, X_valid, Y_valid):
     decision_tree_model = DecisionTreeClassifier()
     decision_tree_model.fit(X_train, Y_train)
@@ -61,8 +60,8 @@ for data_name in divided_train_data["X_train_data"]:
     Y_valid = divided_train_data["Y_valid_data"][data_name]
 
     print(data_name,
+          gaussian_NB_f(X_train, Y_train, X_valid, Y_valid),
           decision_tree_f(X_train, Y_train, X_valid, Y_valid),
           random_forest_f(X_train, Y_train, X_valid, Y_valid),
-          # gaussian_NB_f(X_train, Y_train, X_valid, Y_valid)
           )
 

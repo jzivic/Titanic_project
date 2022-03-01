@@ -1,13 +1,13 @@
 """
 Četvrti dio: kNN algoritam.
 Jedina nepoznanica je pronaći optimalan broj najbližih susjeda na različitim ulaznim podacima koji će se varirati
-za sve setove podataka u rangu 1-10.
+za sve setove podataka u rangu 1-40.
 """
 
 
 from Preprocessing import input_data, output_data
-# from Preprocessing import Y_train
-# from Preprocessing import divided_train_data, all_X_test_data
+from Preprocessing import Y_train
+from Preprocessing import divided_train_data, all_X_test_data
 from sklearn.metrics import accuracy_score
 
 import openpyxl, pickle, os, shutil, math, sklearn
@@ -68,10 +68,8 @@ for data_name in divided_train_data["X_train_data"]:
 
     accuracy_dict[data_name] = acc_for_data  # dodavanje svih točnosti u rječnik
 
-
 accuracy_DF = pd.DataFrame(accuracy_dict, index=[n_neigh_range])  # kreiranje DataFrame-project_data
 accuracy_DF.to_excel(xlsx_file, sheet_name="Accuracity")                     # zapisivanje excel file-project_data
-
 
 
 
@@ -123,21 +121,18 @@ plot_accuracity(data_sets= [data for data in divided_train_data["X_train_data"]]
 
 
 
-
-
-
-
 """
 Zaključak:
  
     -Na primjeru neskaliranih podataka kao i većine ostalih zaključuje se da najbolju točnost za train set imaju modeli
      u kojima se uzima samo 1 najbliži susjed (osim podataka s Min Max skaliranjem) - PRETRENIRANOST!!
+        
+    - Za validacijski set podataka najbolju točnosti imaju skalirani podaci s cca 10 susejeda.
     
     - Skalirani podaci (std i MM) imaju značajnije bolju točnost od ostalih odataka - dobro za kNN algoritam!!
-    - MM ima veću stabilnost od std skaliranja -> manje oscilacije ovisno o broju susjeda
-    
-    -Najbolju točnost imaju MM podaci za 5 susjeda i ta će se točnost uzeti
-    
+
+    - MM ima malo veću stabilnost od std skaliranja -> manje oscilacije ovisno o broju susjeda
+        
 """
 
 

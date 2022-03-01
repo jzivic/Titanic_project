@@ -83,8 +83,6 @@ accuracy_DF = pd.DataFrame(accuracy_dict, index=[C_range])  # kreiranje DataFram
 
 
 
-
-
 # Funkcija koja zapisuje sve točnosti u excel
 def to_excel():
     accuracy_DF.to_excel(xlsx_file, sheet_name="Accuracity")                     # zapisivanje excel file-project_data
@@ -92,7 +90,7 @@ def to_excel():
     workbook = openpyxl.load_workbook(xlsx_file)
     workbook.get_sheet_by_name("Accuracity").cell(row=1, column=1).value = "C"
     workbook.get_sheet_by_name("Accuracity").cell(row=1, column=1).fill = \
-        openpyxl.styles.PatternFill("solid", fgColor="00FFFF00")  # bojanje oznaka C
+        openpyxl.styles.PatternFill("solid", fgColor="00FFFF00")                     # bojanje oznaka C
 
     # Bojanje ćelija u excelu tamo gdje je najveća točnost modela za pojedine podatke
     for data_name in accuracy_DF:
@@ -133,11 +131,12 @@ def plot_accuracity(data_sets):
     fig.savefig(output_Log_Reg+"plot_LogReg.png", dpi=300)
 
 # plot_accuracity(data_sets= ["X", "scal_std_X", "scal_MM_X"])
-plot_accuracity(data_sets= ["X"])
+plot_accuracity(data_sets= ["X", "poly4_X"])
 
 
 
-# Funkcija kojia ispisuje koeficijente korelacije (važnost svake kategorije u modelu)
+# Funkcija kojia ispisuje koeficijente korelacije (važnost svake kategorije u modelu
+# U svim grafovima puna crta označava validacijski set a isprekidana train set
 def Log_Reg_coeffs():
     X_train = divided_train_data["X_train_data"]["X"]
     X_valid = divided_train_data["X_valid_data"]["X"]
@@ -168,7 +167,7 @@ Zaključci:
         ovisno o podacima.
 
     - Točnost modela dosta ovisi o odabiru random_state-project_data i podacima koji se uzimaju za train i
-        validation set!
+        validation set! Razlog je relativno mali set podataka i njihova nepotpunost. 
 
     - Najbolju točnost train seta pokazuju podaci koji su preslikani u višu dimenziju i to za 4 razine: točnost 88.23%
         -> logično jer je model s više parametara najlakše postaje prenaučen. 
@@ -177,9 +176,7 @@ Zaključci:
             
     - Nakon provedene PCA analize dobiva se nešto manja točnost modela koja se manje smanjuje sa smanjivanjem
         broja dimenzija. Međutim konvergencija je značajno brža: koristan alat za veće skupove podataka 
-   
-    -Nema smisla dizati podatke u viši prostor značjki i potom ih skalirati 
-    
+       
     - Za pravi set podataka može se očekivati malo manja točnost jer na dosta podataka fali kategorija: Age
        
     - Odabrani podaci: prvotni X set podaci i C=100 
