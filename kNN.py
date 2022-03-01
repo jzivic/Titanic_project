@@ -6,7 +6,6 @@ za sve setove podataka u rangu 1-40.
 
 
 from Preprocessing import input_data, output_data
-from Preprocessing import Y_train
 from Preprocessing import divided_train_data, all_X_test_data
 from sklearn.metrics import accuracy_score
 

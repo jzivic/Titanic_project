@@ -13,7 +13,6 @@ Na kraju će se rezultati zapisati u excel datoteke posebno za svaki set podatak
 from Preprocessing import input_data, output_data
 # Ukoliko se žele stvarati novi podaci svaku skriptu, ovo NE treba biti zakomentirano
 from Preprocessing import divided_train_data, all_X_test_data
-from Preprocessing import Y_train
 
 import openpyxl, pickle, os, shutil
 import pandas as pd

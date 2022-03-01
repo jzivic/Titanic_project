@@ -360,13 +360,13 @@ with open(input_data+'all_X_test_data.pickle', 'wb') as f_test:    # spremanje r
 # Rječnik sa svim ukupnim train podacima
 all_X_train_data = {
                     "X": X_train,
-                    "scal_std_X": scal_std_X_train,
-                    "scal_MM_X": scal_MM_X_train,
+                    # "scal_std_X": scal_std_X_train,
+                    # "scal_MM_X": scal_MM_X_train,
                     # "poly3_X": poly3_X_train,
                     # "poly4_X": poly4_X_train,
-                    "pca_6_X": pca_6_X_train,
-                    "pca_5_X": pca_5_X_train,
-                    "pca_4_X": pca_4_X_train,
+                    # "pca_6_X": pca_6_X_train,
+                    # "pca_5_X": pca_5_X_train,
+                    # "pca_4_X": pca_4_X_train,
                     }
 
 
