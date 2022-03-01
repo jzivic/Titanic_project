@@ -1,5 +1,6 @@
 # Titanic_project
 Titanic case je školski primjer primjene strojnog učenja za analizu podataka. Input i output podataka se može vidjeti na linku:
+https://drive.google.com/drive/folders/1Z-O_pj4bXXnEwCtQfAH8lIWb0zigawvO?usp=sharing
 
 Case je podijeljen u 3 dijela:
 
